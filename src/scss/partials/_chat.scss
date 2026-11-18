@@ -576,6 +576,7 @@
 }
 
 #column-center {
+  --chat-pane-inline-inset: calc(var(--page-chats-padding) * -1);
 	position: absolute;
 	inset: var(--page-chats-padding);
 
@@ -599,12 +600,14 @@
 	// panel is shown) is folded into the left side so chat content stays centered
 	// past the panel too.
 	@include respond-to(no-floating-left-sidebar) {
+    --chat-pane-inline-inset: calc((var(--folders-sidebar-offset) + var(--left-column-width) - var(--page-chats-padding)) / 2);
 		transform: translateX(calc((var(--folders-sidebar-offset) + var(--left-column-width) + var(--page-chats-padding)) / 2 * var(--reflect)));
 		transition: transform var(--transition-standard-out);
 	}
 
 	@include respond-to(no-floating-left-sidebar) {
 		body.is-right-column-shown:not(.right-column-floats) & {
+      --chat-pane-inline-inset: calc((var(--folders-sidebar-offset) + var(--left-column-width) + var(--right-column-width)) / 2);
 			transform: translateX(calc((var(--folders-sidebar-offset) + var(--left-column-width) - var(--right-column-width)) / 2 * var(--reflect)));
 			transition: transform var(--transition-standard-in);
 		}
@@ -1372,7 +1375,7 @@ $bubbles-keyboard-fade: string.unquote("(var(--bubbles-scrollable-fade-bottom) -
 	// the scroll region widens. They mirror the #column-center translateX
 	// formulas above. Base = handheld / floating-drawer range (the left bar
 	// overlays, so the chat fills the whole content box).
-	inset-inline: calc(var(--page-chats-padding) * -1);
+	inset-inline: var(--chat-pane-inline-inset, calc(var(--page-chats-padding) * -1));
 	flex: 1 1 auto;
 	position: absolute;
   inset-block: calc(var(--page-chats-padding) * -1);
@@ -1380,19 +1383,6 @@ $bubbles-keyboard-fade: string.unquote("(var(--bubbles-scrollable-fade-bottom) -
 
 	transform: translate3d(0, var(--translateY), 0);
 	transition: transform var(--transition-standard-out);
-
-  #column-center & {
-    // Docked-left range: counter #column-center's centring shift so the scroll
-    // area reaches the real edges — the page edge when the right column is
-    // closed/floating, or the docked right column's inner edge when it's shown.
-    @include respond-to(no-floating-left-sidebar) {
-      inset-inline: calc((var(--folders-sidebar-offset) + var(--left-column-width) - var(--page-chats-padding)) / 2);
-
-      body.is-right-column-shown:not(.right-column-floats) & {
-        inset-inline: calc((var(--folders-sidebar-offset) + var(--left-column-width) + var(--right-column-width)) / 2);
-      }
-    }
-  }
 
 	@include animation-level-below(2) {
 		transition: none !important;

@@ -13,6 +13,7 @@ import ChatTopbar from '@components/chat/topbar';
 import {NULL_PEER_ID, REPLIES_PEER_ID, SEND_PAID_WITH_STARS_DELAY, VERIFICATION_CODES_BOT_ID} from '@appManagers/constants';
 import getAutoDeleteUnavailablePeerIds from '@appManagers/utils/peers/getAutoDeleteUnavailablePeerIds';
 import mediaSizes, {ScreenSize} from '@helpers/mediaSizes';
+import {getDesignSystemLayout} from '@config/designSystem';
 import ChatSearch from '@components/chat/search';
 import IS_TOUCH_SUPPORTED from '@environment/touchSupport';
 import ChatBackgroundGradientRenderer from '@components/chat/gradientRenderer';
@@ -555,22 +556,15 @@ export default class Chat extends EventListenerBase<{
    * itself (`setChatInputKeyboardHeight`)
    */
   public recomputePaddings(instant?: boolean) {
-    // const rem = parseFloat(getComputedStyle(document.documentElement).fontSize);
-    const rem = 16;
-    // Main chat reserves 4.5rem above + 4rem below for the floating topbar / pinned-plate
-    // buffer and the chat-input plate. The preview shows neither — only the basic 3rem
-    // topbar — so collapse to topbar-height + 0.5rem (page-chats-padding) on each side.
-    // Handhelds drop those buffers too: the page inset shrinks to 8px so each floating
-    // plate's inner edge sits at 56px (3rem + 0.5rem). Collapse both spacers to sit flush
-    // (= --chat-padding-top / --chat-padding-bottom) instead of the wider desktop gap. Kept
-    // in sync across mobile<->desktop transitions by the 'changeScreen' listener in init().
-    const collapse = this.isPreview || mediaSizes.isMobile;
-    const topBase = collapse ? 3.5 : 4.5;
-    const bottomBase = collapse ? 3.5 : 4;
+    // Keep the history reservation consistent with the navigation geometry.
+    // Popup previews still own their original 56px spacers in either style.
+    const layout = getDesignSystemLayout(document.documentElement.dataset.designSystem, mediaSizes.isMobile);
+    const topBase = this.isPreview ? 56 : layout.historyTop;
+    const bottomBase = this.isPreview ? 56 : layout.historyBottom;
     // * the preview's topbar stays where it is under the bars of a call or the player (_chatPreview.scss)
     const bars = this.isPreview ? 0 : this.topbarBarsPx;
-    const top = Math.round(topBase * rem + this.pinnedFloatingHeightPx + bars);
-    const bottom = Math.round(bottomBase * rem + this.chatInputSurplusPx + this.chatInputKeyboardPx);
+    const top = Math.round(topBase + this.pinnedFloatingHeightPx + bars);
+    const bottom = Math.round(bottomBase + this.chatInputSurplusPx + this.chatInputKeyboardPx);
     this.chatPaddingTop[1](top);
     this.chatPaddingBottom[1](bottom);
     // * what a short history is to fill: what these two leave of the screen (`.bubbles-inner`)
@@ -897,6 +891,9 @@ export default class Chat extends EventListenerBase<{
 
     // Spacer heights depend on the screen (desktop reserves a wider floating-plate buffer
     // than handheld), so recompute them when crossing the mobile boundary. See recomputePaddings().
+    this.bubbles.listenerSetter.add(rootScope)('design_system_changed', () => {
+      this.recomputePaddings(true);
+    });
     this.bubbles.listenerSetter.add(mediaSizes)('changeScreen', () => {
       this.recomputePaddings();
     });

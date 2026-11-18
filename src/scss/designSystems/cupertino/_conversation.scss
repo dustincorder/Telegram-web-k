@@ -1,0 +1,57 @@
+@mixin styles {
+  // Theme-derived message colors stay together: text, links, replies, polls,
+  // reactions, time, tails and media overlays must agree with the background.
+  .bubble .bubble-content {
+    box-shadow: none;
+  }
+
+  .bubble.is-group-last {
+    margin-block-end: .5rem;
+  }
+
+  .bubble .time {
+    font-variant-numeric: tabular-nums;
+  }
+
+  .bubbles .service-msg {
+    font-weight: 500;
+  }
+
+  .chat {
+    --chat-padding-bottom: calc(var(--chat-input-height) + .25rem);
+  }
+
+  // ---- Docked composer: a full-width flat bar on the bottom edge of the
+  // pane with a hairline top edge (safe-area insets stay owned by the base
+  // composer). The field inside keeps a soft corner, like iOS Messages.
+  .chat-input-main {
+    bottom: 0;
+    background-color: var(--surface-color);
+    border-block-start: 1px solid var(--cupertino-hairline);
+  }
+
+  .chat-input-container {
+    --padding-horizontal: .5rem;
+  }
+
+  .chat-input-wrapper {
+    --chat-input-border-radius: 1.125rem;
+    border: 1px solid var(--cupertino-hairline);
+    box-shadow: none;
+  }
+
+  .chat-input-plate {
+    border-block-start: 1px solid var(--cupertino-hairline);
+  }
+
+  .chat-input-control-button,
+  .chat-input-secondary-button {
+    color: var(--primary-color);
+  }
+
+  // Existing control dimensions and helper/editor height accounting also
+  // cover recording, selection, reply/edit, bot keyboards and the mobile IME.
+  .chat-input .btn-send:not(.disabled) {
+    box-shadow: none;
+  }
+}

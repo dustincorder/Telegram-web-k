@@ -130,3 +130,7 @@
 
 @use "partials/accessibility";
 @use "partials/testDcBadge";
+
+// Cupertino overrides every app partial — it must be the last import so it
+// wins the cascade at equal specificity.
+@use "partials/designSystemCupertino";

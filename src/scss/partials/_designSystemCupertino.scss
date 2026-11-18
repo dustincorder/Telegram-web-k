@@ -1,0 +1,30 @@
+// Every Cupertino rule is emitted under one opt-in boundary. Classic and Material 3
+// keep their existing primitives and theme values.
+//
+// The boundary is imported LAST in style.scss so it wins the cascade at equal
+// specificity against every app partial.
+@use "../designSystems/cupertino/tokens";
+@use "../designSystems/cupertino/navigation";
+@use "../designSystems/cupertino/dialogs";
+@use "../designSystems/cupertino/conversation";
+@use "../designSystems/cupertino/settings";
+@use "../designSystems/cupertino/overlays";
+
+// The large navigation title exists in the DOM for every design system (it is
+// rendered once by AppSidebarLeft); only Cupertino reveals it.
+.cupertino-large-title {
+  display: none;
+}
+
+html[data-design-system='cupertino'] {
+  @include tokens.styles;
+  @include navigation.styles;
+  @include dialogs.styles;
+  @include conversation.styles;
+  @include settings.styles;
+  @include overlays.styles;
+
+  .cupertino-large-title {
+    display: block;
+  }
+}

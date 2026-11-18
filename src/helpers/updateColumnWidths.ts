@@ -1,6 +1,9 @@
 /**
  * Single source of truth for column widths. JS owns every width-related CSS
- * variable; SCSS only reads them.
+ * variable; SCSS only reads them. Classic/Material geometry below is the
+ * default. Cupertino's layout policy removes column/chat insets and the folder
+ * gap; its full-pane navigation shares the scroll region's CSS bounds while
+ * messages and composer retain the readable --chat-width cap.
  *
  *   --default-column-width        min(vw, DEFAULT_COLUMN_WIDTH) — the standard
  *                                  sidebar size; used as the fallback when
@@ -65,6 +68,8 @@ import rootScope from '@lib/rootScope';
 import clamp from '@helpers/number/clamp';
 import throttle from '@helpers/schedulers/throttle';
 import {getAppWindow} from '@helpers/appWindow';
+import {getDesignSystemLayout} from '@config/designSystem';
+import {hotListen} from '@helpers/hotModule';
 
 // Default and resize range for the left & right columns.
 export const DEFAULT_COLUMN_WIDTH = 360;
@@ -77,29 +82,13 @@ export const SIDEBAR_COLLAPSED_WIDTH = 80;
 // Folders sidebar geometry. Owned by JS — written to `--folders-sidebar-width`
 // and `--folders-sidebar-offset` so SCSS only consumes the vars.
 const FOLDERS_SIDEBAR_WIDTH = 72;
-const FOLDERS_SIDEBAR_GAP = 8;
-const FOLDERS_SIDEBAR_OFFSET = FOLDERS_SIDEBAR_WIDTH + FOLDERS_SIDEBAR_GAP;
 
-// Outer page padding values, written into `--page-chats-padding` by JS in
-// two scopes (see below). The sidebar value collapses to 0 on handheld so
-// #column-left / #column-right fill the screen; the chat keeps 8 so the
-// floating topbar / chat-input plates have breathing room.
-const PAGE_CHATS_PADDING_ROOT_DESKTOP = 16;
-const PAGE_CHATS_PADDING_ROOT_HANDHELD = 0;
-const PAGE_CHATS_PADDING_CHAT_DESKTOP = 16;
-const PAGE_CHATS_PADDING_CHAT_HANDHELD = 8;
-// Used in right-column-fits math (desktop threshold).
-const PAGE_CHATS_PADDING = PAGE_CHATS_PADDING_ROOT_DESKTOP;
+
 // Visual cap on chat-content max width — bubbles / pinned plates / topbar
 // inner row don't grow past this even on huge viewports. Exposed via the
 // `--chat-width` CSS variable (clamped to the actually-available middle
 // column width on narrower viewports).
 const CHAT_WIDTH_MAX = 696;
-// Extra spacing used inside the right-sidebar-fit equation — historical
-// `+ 64px` from $right-sidebar-fits, kept as-is so the threshold doesn't
-// shift.
-const RIGHT_SIDEBAR_FITS_EXTRA = 64;
-
 const STORAGE_KEY_LEFT = 'sidebar-left-width';
 const STORAGE_KEY_RIGHT = 'sidebar-right-width';
 
@@ -193,7 +182,7 @@ export function setOpenTabsLeftSidebar(value: boolean): void {
 
 /**
  * Mirror the folders sidebar visibility into the width math. Adds
- * FOLDERS_SIDEBAR_OFFSET to the docked-layout threshold so the right column
+ * the rail width and design-system gap to the docked-layout threshold so the right column
  * starts to float a bit sooner when the folders panel reserves space.
  */
 export function setFoldersSidebarShown(value: boolean): void {
@@ -262,6 +251,8 @@ export default function updateColumnWidths(): void {
   const root = document.documentElement;
   const vw = getAppWindow().innerWidth;
   const isMobile = mediaSizes.isMobile;
+  const layout = getDesignSystemLayout(root.dataset.designSystem, isMobile);
+  const pageGutter = layout.columnGutter;
 
   // `html` carries the iOS safe-area inset as horizontal padding
   // (`min(16px, env(safe-area-inset-*))` per side — see base.scss). `vw`
@@ -286,15 +277,15 @@ export default function updateColumnWidths(): void {
   // threshold is the sum of every horizontal piece currently in the docked
   // layout, so resizing either column (or collapsing the left, or toggling
   // the folders panel) immediately re-evaluates the floats decision.
-  const foldersOffset = foldersSidebarShown ? FOLDERS_SIDEBAR_OFFSET : 0;
-  const rightColumnFits = foldersOffset + layoutLeftWidth + rightWidth + CHAT_WIDTH_MAX + PAGE_CHATS_PADDING * 4;
+  const foldersOffset = foldersSidebarShown ? FOLDERS_SIDEBAR_WIDTH + layout.foldersGap : 0;
+  const rightColumnFits = foldersOffset + layoutLeftWidth + rightWidth + CHAT_WIDTH_MAX + pageGutter * 4;
   // Handheld is a slider — the right column overlays the chat, so it
   // always floats. Without this body.right-column-floats stays off and the
   // `.bubbles-inner { width: calc(100% - var(--right-column-width) ...) }`
   // rule in _chat.scss subtracts the right column from the chat width,
   // collapsing the messages column to 0 / a tiny centered strip.
   const floats = isMobile || availableWidth < rightColumnFits;
-  const middleWidth = isMobile ? vw : availableWidth - PAGE_CHATS_PADDING * 2;
+  const middleWidth = isMobile ? vw : availableWidth - pageGutter * 2;
   // Chat content max width — fills the viewport on handheld (single-column
   // slider) and caps at CHAT_WIDTH_MAX otherwise. It also never exceeds the
   // space actually free beside the left column: in the docked-left range
@@ -310,17 +301,16 @@ export default function updateColumnWidths(): void {
   const isFloatingLeft = mediaSizes.isLessThanFloatingLeftSidebar && !isMobile;
   const chatAvailableWidth = (isMobile || isFloatingLeft) ?
     middleWidth :
-    availableWidth - foldersOffset - layoutLeftWidth - PAGE_CHATS_PADDING * 3;
+    availableWidth - foldersOffset - layoutLeftWidth - pageGutter * 3;
   const chatWidth = isMobile ? vw : Math.min(chatAvailableWidth, CHAT_WIDTH_MAX);
   // Viewport threshold at which the right column can dock at default size
   // without overlapping a CHAT_WIDTH_MAX chat. Exposed for any caller that
   // wants to read the same number JS uses for `body.right-column-floats`.
-  const rightSidebarFits = DEFAULT_COLUMN_WIDTH * 2 + CHAT_WIDTH_MAX + RIGHT_SIDEBAR_FITS_EXTRA;
-  // Outer chrome — split into two scopes so left/right sidebars can drop
-  // to 0 on handheld (full-screen slider) while the chat keeps an 8px
-  // breathing room for the floating topbar / chat-input plates.
-  const pageChatsPaddingRoot = isMobile ? PAGE_CHATS_PADDING_ROOT_HANDHELD : PAGE_CHATS_PADDING_ROOT_DESKTOP;
-  const pageChatsPaddingChat = isMobile ? PAGE_CHATS_PADDING_CHAT_HANDHELD : PAGE_CHATS_PADDING_CHAT_DESKTOP;
+  const rightSidebarFits = DEFAULT_COLUMN_WIDTH * 2 + CHAT_WIDTH_MAX + pageGutter * 4;
+  // Classic keeps separate sidebar/chat insets on handhelds. Cupertino
+  // navigation reaches pane edges at every size; its composer owns its inset.
+  const pageChatsPaddingRoot = isMobile ? 0 : pageGutter;
+  const pageChatsPaddingChat = layout.chatInset;
 
   if(last.defaultColumn !== defaultColumnWidth) {
     root.style.setProperty('--default-column-width', defaultColumnWidth + 'px');
@@ -392,3 +382,6 @@ export function installColumnWidthsUpdater(): void {
 // runs. Subsequent resizes are driven by the mediaSizes listener installed
 // in installColumnWidthsUpdater().
 updateColumnWidths();
+
+// The controller emits after changing the root marker, including direct initialization.
+hotListen(import.meta.hot, rootScope, 'design_system_changed', updateColumnWidths);

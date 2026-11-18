@@ -168,6 +168,7 @@ export type BroadcastEvents = {
 
   'connection_status_change': ConnectionStatusChange,
   'settings_updated': {key: string, value: any, settings: StateSettings},
+  'design_system_changed': StateSettings['designSystem'],
   'draft_updated': {peerId: PeerId, threadId?: number, monoforumThreadId?: PeerId, draft: MyDraftMessage | undefined, force?: boolean},
 
   'background_change': void,
