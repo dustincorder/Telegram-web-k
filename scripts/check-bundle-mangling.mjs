@@ -396,6 +396,13 @@ function checkChunk(dir, file) {
   for(const read of reads) {
     const mapped = named.get(read.reference.start);
     if(!mapped || mapped.name === read.reference.name) continue;
+    // * The app's own sources only: third-party code ships pre-minified, and
+    // * its short identifiers collide across scopes by design (lit's
+    // * `property.js` uses `o` both for its default options const and for a
+    // * destructured `{name: o}` inside the same function), which reads as a
+    // * spelling disagreement the check cannot tell from a real one. The
+    // * replacement-character check below still covers the whole chunk.
+    if(!mapped.source.includes('/src/')) continue;
 
     const where = disagreement(read, mapped);
     if(!where) continue;

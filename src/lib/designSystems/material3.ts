@@ -12,9 +12,7 @@ let loaded: Promise<unknown> | undefined;
 export const loadMaterial3Components = (value: unknown): Promise<unknown> | undefined => {
   if(normalizeDesignSystemId(value) !== 'material3') return undefined;
   loaded ??= Promise.all([
-    import('@material/web/iconbutton/outlined-icon-button.js'),
-    import('@material/web/iconbutton/filled-tonal-icon-button.js'),
-    import('@material/web/divider/divider.js')
-  ]).then(() => undefined);
+    import('@material/web/iconbutton/outlined-icon-button.js')
+  ]).then((): undefined => undefined);
   return loaded;
 };

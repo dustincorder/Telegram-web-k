@@ -13,7 +13,7 @@ describe('design system foundation', () => {
   });
 
   it('exposes stable identifiers in order', () => {
-    expect(DESIGN_SYSTEM_IDS).toEqual(['classic', 'cupertino', 'material3']);
+    expect(DESIGN_SYSTEM_IDS).toEqual(['classic', 'material3']);
   });
 
   it('uses Classic as the default and fallback', () => {
@@ -21,14 +21,16 @@ describe('design system foundation', () => {
     expect(SETTINGS_INIT.designSystem).toBe('classic');
     expect(normalizeDesignSystemId(undefined)).toBe('classic');
     expect(normalizeDesignSystemId('legacy')).toBe('classic');
+    // Cupertino is retired: a persisted legacy value falls back to Classic.
+    expect(normalizeDesignSystemId('cupertino')).toBe('classic');
     expect(normalizeDesignSystemId('material3')).toBe('material3');
   });
 
   it('applies a root marker without changing color theme state', () => {
     const theme = SETTINGS_INIT.theme;
 
-    expect(applyDesignSystem('cupertino')).toBe('cupertino');
-    expect(document.documentElement.dataset.designSystem).toBe('cupertino');
+    expect(applyDesignSystem('material3')).toBe('material3');
+    expect(document.documentElement.dataset.designSystem).toBe('material3');
     expect(SETTINGS_INIT.theme).toBe(theme);
   });
 

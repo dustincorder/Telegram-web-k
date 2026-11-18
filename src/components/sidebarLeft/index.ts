@@ -188,6 +188,11 @@ export class AppSidebarLeft extends SidebarSlider {
     );
 
     return () => {
+      // Moving a node drops focus on it; if the user was typing in the field,
+      // give the focus back after the move.
+      const input = this.inputSearch.input as HTMLInputElement;
+      const wasFocused = document.activeElement === input;
+
       disposer();
       // The adopted search field is not owned by the reactive tree — put it
       // back where construct() first placed it, ahead of any accessories that
@@ -197,6 +202,7 @@ export class AppSidebarLeft extends SidebarSlider {
         const anchor = header.querySelector('.sidebar-emoji-status') ||
           header.querySelector('.sidebar-lock-button');
         anchor ? anchor.before(inputSearchContainer) : header.append(inputSearchContainer);
+        if(wasFocused) input.focus();
       }
       host.remove();
     };

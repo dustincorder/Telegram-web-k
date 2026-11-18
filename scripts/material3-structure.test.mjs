@@ -24,9 +24,12 @@ const walk = (dir, acc = []) => {
 
 test('Cupertino is fully retired from the source tree', () => {
   // The popup-sandbox vCard fixture names the *city* Cupertino (Apple's
-  // address) — fixture data, not design-system code.
+  // address), and the vitest design-system suite references the retired
+  // value only to prove it falls back to Classic — data and fallback tests,
+  // not design-system code.
   const leftovers = walk('src')
   .filter((path) => !path.includes('popupSandbox/stories/'))
+  .filter((path) => !(path.startsWith('src/tests/') && readFileSync(new URL(`../${path}`, import.meta.url), 'utf8').includes("normalizeDesignSystemId('cupertino')")))
   .filter((path) => /cupertino/i.test(readFileSync(new URL(`../${path}`, import.meta.url), 'utf8')));
   assert.deepEqual(leftovers, [], 'no cupertino code may remain in src/');
   assert.ok(!readdirSync(new URL('../src/components', import.meta.url)).includes('cupertino'),

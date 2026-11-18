@@ -1,4 +1,4 @@
-import {onCleanup, onMount} from 'solid-js';
+import {onMount} from 'solid-js';
 import I18n, {i18n, LangPackKey} from '@lib/langPack';
 import Icon from '@components/icon';
 
@@ -11,8 +11,9 @@ import Icon from '@components/icon';
  * Only mounted while the Material 3 design system is active (AppSidebarLeft
  * owns mounting and restoring). The search field is the app's real
  * InputSearch instance, adopted (moved) out of the nav bar for the duration
- * and restored to it on dispose, so Classic keeps its original header. The
- * trailing icon button is an official `@material/web` component
+ * and restored to it by AppSidebarLeft's disposer — this component must NOT
+ * remove it on cleanup, or the restore would find it detached and skip it.
+ * The trailing icon button is an official `@material/web` component
  * (`md-outlined-icon-button`, lazily registered by
  * `lib/designSystems/material3.ts`): it focuses the adopted field, i.e. the
  * M3 search affordance of the app bar.
@@ -28,9 +29,6 @@ export default function Material3SidebarNav(props: {
   onMount(() => {
     searchRow?.append(props.searchContainer);
     triggerIcon?.append(Icon('search', 'md3-nav-trigger-icon'));
-    onCleanup(() => {
-      props.searchContainer.remove();
-    });
   });
 
   return (

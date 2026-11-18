@@ -119,6 +119,12 @@
     display: none;
   }
 
+  // The web components upgrade whenever their lazy module lands; until then
+  // an md-* element is an empty inline box — keep it out of the layout.
+  .md3-nav md-outlined-icon-button:not(:defined) {
+    display: none;
+  }
+
   @include respond-to(handhelds) {
     .sidebar-header,
     .main-search-sidebar-header {
