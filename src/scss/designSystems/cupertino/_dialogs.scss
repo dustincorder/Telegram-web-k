@@ -15,8 +15,10 @@
   .chatlist-chat {
     border-radius: 0;
 
+    // Telegram iOS 16–18 row type: 17pt semibold title, 15pt regular
+    // subtitle, 12pt tabular time.
     .dialog-title .user-title {
-      font-size: var(--font-size-16);
+      font-size: 1.0625rem;
       font-weight: 600;
     }
 

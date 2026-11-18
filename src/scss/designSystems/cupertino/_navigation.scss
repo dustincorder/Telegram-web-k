@@ -19,13 +19,24 @@
     border-inline-start: 1px solid var(--cupertino-hairline);
   }
 
-  // ---- Large navigation title (the Cupertino marker). The element is
-  // rendered by AppSidebarLeft inside #chatlist-container, so it hides with
-  // the list during search and tab navigation.
-  .cupertino-large-title {
-    padding: .375rem 1rem .25rem;
+  // ---- Sidebar navigation block: large title + search row below the nav
+  // bar — the iOS Mail / Messages layout. AppSidebarLeft mounts it inside
+  // #chatlist-container, so it hides with the list during search and tab
+  // navigation; the search field is the app's real InputSearch, adopted out
+  // of the nav bar while this design system is active.
+  .cupertino-nav {
+    background-color: var(--surface-color);
+
+    // h2 semantics for the navigation heading; the visuals live on the span.
+    .cupertino-nav-title {
+      margin: 0;
+      padding: .25rem 1rem .125rem;
+      font-size: inherit;
+      font-weight: inherit;
+    }
 
     .cupertino-large-title-text {
+      display: block;
       font-size: var(--cupertino-large-title-size);
       line-height: 1.2;
       font-weight: 700;
@@ -35,9 +46,15 @@
       overflow: hidden;
       text-overflow: ellipsis;
     }
+
+    .cupertino-nav-search {
+      padding: .25rem .5rem .25rem .75rem;
+    }
   }
 
-  #column-left.is-collapsed .cupertino-large-title {
+  // The collapsed rail carries no titles: the nav bar keeps its own collapse
+  // behavior from the base styles.
+  #column-left.is-collapsed .cupertino-nav {
     display: none;
   }
 

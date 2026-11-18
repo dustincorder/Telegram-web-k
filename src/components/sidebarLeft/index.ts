@@ -1,6 +1,7 @@
 import {createComponent, createEffect, createRoot, createSignal, createUniqueId, on} from 'solid-js';
 import {render} from 'solid-js/web';
-import CupertinoLargeTitle from '@components/cupertino/largeTitle';
+import CupertinoSidebarNav from '@components/cupertino/sidebarNav';
+import useDesignSystem from '@stores/designSystem';
 import appImManager from '@lib/appImManager';
 import rootScope from '@lib/rootScope';
 import {createSearchGroup, getSearchTransitionDuration, SearchGroup} from '@components/searchGroup';
@@ -163,16 +164,40 @@ export class AppSidebarLeft extends SidebarSlider {
   private hasUpdate: boolean;
 
   private onResize: () => void;
-  private largeTitleDisposer: () => void;
+  /** set while the Cupertino sidebar nav block is mounted (see mountCupertinoNav) */
+  private cupertinoNavDisposer: () => void;
 
-  private mountLargeTitle() {
+  /**
+   * The Cupertino navigation block (large title + adopted search row) below
+   * the nav bar. Adopts the real InputSearch out of the header while active;
+   * the disposer restores it to the header so Classic keeps its original
+   * structure. Mounted/unmounted reactively with the design system.
+   */
+  private mountCupertinoNav() {
     const host = document.createElement('div');
     this.chatListContainer.prepend(host);
+    const inputSearchContainer = this.inputSearch.container;
     const disposer = render(
-      () => createComponent(CupertinoLargeTitle, {key: 'FilterChats'}),
+      () => createComponent(CupertinoSidebarNav, {
+        titleKey: 'FilterChats',
+        searchContainer: inputSearchContainer
+      }),
       host
     );
-    return disposer;
+
+    return () => {
+      disposer();
+      // The adopted search field is not owned by the reactive tree — put it
+      // back where construct() first placed it, ahead of any accessories that
+      // were appended later (emoji status / lock button).
+      const header = this.sidebarEl.querySelector('.item-main .sidebar-header');
+      if(header && inputSearchContainer.parentElement) {
+        const anchor = header.querySelector('.sidebar-emoji-status') ||
+          header.querySelector('.sidebar-lock-button');
+        anchor ? anchor.before(inputSearchContainer) : header.append(inputSearchContainer);
+      }
+      host.remove();
+    };
   }
 
   constructor() {
@@ -192,11 +217,19 @@ export class AppSidebarLeft extends SidebarSlider {
     const sidebarHeader = this.sidebarEl.querySelector('.item-main .sidebar-header');
     sidebarHeader.append(this.inputSearch.container);
 
-    // Cupertino large navigation title: a Solid component so it mounts and
-    // unmounts with the design system, with reactive localized text. Mounted
-    // inside the chat-list transition item so it hides with the list (search,
-    // other tabs); the component renders nothing outside the cupertino style.
-    this.largeTitleDisposer = this.mountLargeTitle();
+    // Cupertino navigation block (large title + search row): mounted and
+    // unmounted reactively with the interface style, so Classic and
+    // Material 3 never carry it.
+    createRoot(() => {
+      createEffect(on(useDesignSystem()[0], (designSystem) => {
+        if(designSystem === 'cupertino') {
+          this.cupertinoNavDisposer ??= this.mountCupertinoNav();
+        } else {
+          this.cupertinoNavDisposer?.();
+          this.cupertinoNavDisposer = undefined;
+        }
+      }));
+    });
 
     this.backBtn = this.sidebarEl.querySelector('.sidebar-back-button') as HTMLButtonElement;
     this.backBtn.setAttribute('aria-label', I18n.format('StarsRating.Back', true));

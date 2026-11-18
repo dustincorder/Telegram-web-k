@@ -23,6 +23,7 @@ import {getMiddleware, MiddlewareHelper} from '@helpers/middleware';
 import {attachRowController, createRowSortableIcon, RowMediaSizeType, type RowTsxController} from '@components/rowTsxController'
 import {avatarNew} from '@components/avatarNew';
 import Icon from '@components/icon';
+import useDesignSystem from '@stores/designSystem';
 import {isForumTopic, isSavedDialog} from '@appManagers/utils/dialogs/isDialog';
 import {ChatType} from '@components/chat/chatType';
 import {BADGE_TRANSITION_TIME} from '@components/autonomousDialogList/constants';
@@ -499,6 +500,13 @@ export class DialogElement {
   public createTimePill() {
     if(this.dom.timePill) return;
     const {lastTimeSpan} = this.dom;
+    // Cupertino has no pill: the pin glyph stands inline before the time,
+    // like Telegram iOS. Classic keeps the pill box.
+    if(useDesignSystem()[0]() === 'cupertino') {
+      const pin = this.dom.timePill = Icon('pin_status_filled', 'dialog-time-pill-pin', 'cupertino-time-pin');
+      lastTimeSpan.before(pin);
+      return;
+    }
     const pill = this.dom.timePill = document.createElement('span');
     pill.className = 'dialog-time-pill';
     lastTimeSpan.replaceWith(pill);

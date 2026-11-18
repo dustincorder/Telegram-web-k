@@ -146,15 +146,22 @@ Two structural fixes define the current implementation:
    fourth, so its rules lost the cascade against ~90 later partials at equal
    specificity — the main reason the Cupertino selection barely changed the
    rendered interface.
-2. **Large navigation title.** `CupertinoLargeTitle`
-   (`src/components/cupertino/largeTitle.tsx`) is a design-system-aware Solid
-   component: it mounts only while the Cupertino style is active (reading
-   `stores/designSystem.ts`, a signal fed by the controller's
-   `design_system_changed` event) and unmounts entirely for Classic and
-   Material 3 — no default-hide CSS rule is needed. `AppSidebarLeft` mounts
-   it as the first child of `#chatlist-container`, so it hides with the list
-   during search and tab navigation. The localized text is reactive
-   (`i18n`), it is `aria-hidden` (it duplicates the list heading), and it
-   hides when the sidebar is collapsed. This is the clearly identifiable
-   implementation marker between Classic and Cupertino: a 30px/700-weight
-   large title in the sidebar.
+2. **Sidebar navigation block.** `CupertinoSidebarNav`
+   (`src/components/cupertino/sidebarNav.tsx`) replaces Web K's single header
+   bar with the iOS Mail / Messages arrangement: a nav bar (the untouched
+   `.sidebar-header` with its menu, emoji-status and lock accessories), then
+   a 34px/700 large navigation title, then the search row. The app's real
+   `InputSearch` instance is adopted (moved out of the nav bar) while
+   Cupertino is active and restored to the header on dispose, so Classic and
+   Material 3 keep their original structure. `AppSidebarLeft` mounts and
+   unmounts it reactively (`stores/designSystem.ts`, fed by the controller's
+   `design_system_changed` event). Mounted inside `#chatlist-container`, it
+   hides with the list during search and tab navigation, and hides entirely
+   in the collapsed rail. The title is a real `h2` navigation heading.
+3. **Chat-list rows.** The row skeleton (avatar / title+details / subtitle)
+   already matches Telegram iOS anatomy; the Cupertino variant changes its
+   structure where iOS differs: `DialogElement.createTimePill` renders a
+   pill-free inline pin before the timestamp under Cupertino (no pill box),
+   and the row typography is iOS 16–18 (17pt semibold title, 15pt subtitle,
+   12pt tabular time). Virtualized heights, badges, selection, context menus
+   and reordering are untouched.
