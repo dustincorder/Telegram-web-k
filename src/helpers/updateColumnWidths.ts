@@ -1,9 +1,8 @@
 /**
  * Single source of truth for column widths. JS owns every width-related CSS
- * variable; SCSS only reads them. Classic/Material geometry below is the
- * default. Cupertino's layout policy removes column/chat insets and the folder
- * gap; its full-pane navigation shares the scroll region's CSS bounds while
- * messages and composer retain the readable --chat-width cap.
+ * variable; SCSS only reads them. Both interface styles (Classic, Material 3)
+ * share the standard geometry below; a future design-specific layout policy
+ * would come through getDesignSystemLayout.
  *
  *   --default-column-width        min(vw, DEFAULT_COLUMN_WIDTH) — the standard
  *                                  sidebar size; used as the fallback when
@@ -307,8 +306,7 @@ export default function updateColumnWidths(): void {
   // without overlapping a CHAT_WIDTH_MAX chat. Exposed for any caller that
   // wants to read the same number JS uses for `body.right-column-floats`.
   const rightSidebarFits = DEFAULT_COLUMN_WIDTH * 2 + CHAT_WIDTH_MAX + pageGutter * 4;
-  // Classic keeps separate sidebar/chat insets on handhelds. Cupertino
-  // navigation reaches pane edges at every size; its composer owns its inset.
+  // Classic keeps separate sidebar/chat insets on handhelds.
   const pageChatsPaddingRoot = isMobile ? 0 : pageGutter;
   const pageChatsPaddingChat = layout.chatInset;
 

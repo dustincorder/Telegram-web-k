@@ -12,10 +12,8 @@ const SANDBOX_PARAMS = (IS_BETA || IS_PREVIEW) && typeof(location) !== 'undefine
 export const IS_POPUP_SANDBOX = !!SANDBOX_PARAMS?.has('popups');
 // `?widgets=1` — the widget sandbox (components/widgetSandbox/sandbox), on the popup sandbox's mock environment.
 export const IS_WIDGET_SANDBOX = !!SANDBOX_PARAMS?.has('widgets');
-// `?cupertinoPreview=1` — the isolated design-system preview with deterministic fixtures.
-export const IS_CUPERTINO_PREVIEW = IS_BETA && !!SANDBOX_PARAMS?.has('cupertinoPreview');
 // Either sandbox owns the page: no session, mock managers, nothing on the wire.
-export const IS_SANDBOX_PAGE = IS_POPUP_SANDBOX || IS_WIDGET_SANDBOX || IS_CUPERTINO_PREVIEW;
+export const IS_SANDBOX_PAGE = IS_POPUP_SANDBOX || IS_WIDGET_SANDBOX;
 export const DEBUG = (IS_BETA || Modes.debug)/*  && false */;
 const ctx: any = typeof(window) !== 'undefined' ? window : self;
 export const MOUNT_CLASS_TO: any = DEBUG || true/*  && false */ ? ctx : {};

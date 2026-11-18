@@ -1,0 +1,14 @@
+// Material 3 design-system rules. The boundary is imported LAST in
+// style.scss so it wins the cascade at equal specificity against every app
+// partial — the reason a design-system boundary exists at all.
+//
+// The vertical slice rides on official `@material/web` components and M3
+// system tokens (`designSystems/material3/_tokens.scss` maps the live
+// Telegram theme into them); Classic keeps its primitives untouched.
+@use "../designSystems/material3/tokens";
+@use "../designSystems/material3/sidebar";
+
+html[data-design-system='material3'] {
+  @include tokens.styles;
+  @include sidebar.styles;
+}

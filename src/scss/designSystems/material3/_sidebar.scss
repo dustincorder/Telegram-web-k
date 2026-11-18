@@ -1,0 +1,128 @@
+@use "../../shared" as *;
+
+@mixin styles {
+  // ── Top app bar: a flat full-width surface with the M3 divider under it.
+  // The bar's own wiring (burger, tools, search adoption) is unchanged.
+  .sidebar-header,
+  .main-search-sidebar-header {
+    background-color: var(--md-sys-color-surface);
+    border-block-end: 1px solid var(--md-sys-color-outline-variant);
+  }
+
+  // ── Search field: the app's InputSearch, presented through the M3 text
+  // field recipe (filled field: surface-container-high, full corner, no
+  // resting border) via its own CSS custom properties.
+  #column-left .input-search {
+    --height: 44px;
+    --border-radius: var(--md-shape-corner-full);
+    --input-search-background-color: var(--md-sys-color-surface-container-high);
+    --input-search-border-color: transparent;
+  }
+
+  // ── Folder navigation: M3 primary-tab presentation on the app's tabs
+  // primitive (its selection, scrolling and badges stay wired).
+  .menu-horizontal-scrollable {
+    background-color: var(--md-sys-color-surface);
+    border-block-end: 1px solid var(--md-sys-color-outline-variant);
+  }
+
+  .menu-horizontal-div-item {
+    color: var(--md-sys-color-on-surface-variant);
+
+    &.active {
+      color: var(--md-sys-color-primary);
+    }
+  }
+
+  // ── Chat list: M3 list conventions through the rows' own variables —
+  // state-layer hover, secondary-container selection, outline-variant
+  // dividers. Virtualized row heights are unchanged.
+  ul.chatlist {
+    padding-inline: 0;
+  }
+
+  .chatlist-chat {
+    border-radius: var(--md-shape-corner-none);
+
+    &:not(.active):not(.is-selected) {
+      &.menu-open,
+      &.is-forum-open,
+      &.is-dragover {
+        --background: color-mix(
+          in srgb,
+          var(--md-sys-color-on-surface) calc(100% * var(--md-sys-state-hover-state-layer-opacity)),
+          transparent
+        );
+      }
+
+      @media(hover: hover) {
+        &:hover {
+          --background: color-mix(
+            in srgb,
+            var(--md-sys-color-on-surface) calc(100% * var(--md-sys-state-hover-state-layer-opacity)),
+            transparent
+          );
+        }
+      }
+    }
+
+    // Hairline divider between rows, inset to the text column (M3 lists).
+    &:not(:last-child)::after {
+      content: '';
+      position: absolute;
+      inset-inline: 4.5rem 0;
+      inset-block-end: 0;
+      border-block-end: 1px solid var(--md-sys-color-outline-variant);
+      pointer-events: none;
+    }
+
+    &.active::after,
+    &:has(+ .active)::after {
+      border-color: transparent;
+    }
+
+    &.active {
+      --background: var(--md-sys-color-secondary-container);
+    }
+  }
+
+  // ── The M3 sidebar nav block (see components/material3/sidebarNav.tsx):
+  // top app bar label + adopted search row.
+  .md3-nav {
+    background-color: var(--md-sys-color-surface);
+
+    .md3-nav-title {
+      margin: 0;
+      padding: .5rem 1rem .25rem;
+      font-size: var(--md-sys-typescale-headline-small-size);
+      font-weight: var(--md-sys-typescale-headline-small-weight);
+      line-height: 1.35;
+      color: var(--md-sys-color-on-surface);
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    .md3-nav-search {
+      padding: .25rem .5rem .25rem .75rem;
+    }
+
+    // The official M3 icon button gets its size from the search field row.
+    md-outlined-icon-button.md3-nav-search-trigger {
+      --md-outlined-icon-button-icon-size: 20px;
+      --md-outlined-icon-button-size: 36px;
+      margin-inline-start: .5rem;
+    }
+  }
+
+  #column-left.is-collapsed .md3-nav {
+    display: none;
+  }
+
+  @include respond-to(handhelds) {
+    .sidebar-header,
+    .main-search-sidebar-header {
+      padding-block-start: env(safe-area-inset-top);
+    }
+  }
+}

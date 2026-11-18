@@ -1,6 +1,6 @@
 import {createComponent, createEffect, createRoot, createSignal, createUniqueId, on} from 'solid-js';
 import {render} from 'solid-js/web';
-import CupertinoSidebarNav from '@components/cupertino/sidebarNav';
+import Material3SidebarNav from '@components/material3/sidebarNav';
 import useDesignSystem from '@stores/designSystem';
 import appImManager from '@lib/appImManager';
 import rootScope from '@lib/rootScope';
@@ -164,23 +164,25 @@ export class AppSidebarLeft extends SidebarSlider {
   private hasUpdate: boolean;
 
   private onResize: () => void;
-  /** set while the Cupertino sidebar nav block is mounted (see mountCupertinoNav) */
-  private cupertinoNavDisposer: () => void;
+  /** set while the Material 3 sidebar nav block is mounted (see mountMaterial3Nav) */
+  private material3NavDisposer: () => void;
 
   /**
-   * The Cupertino navigation block (large title + adopted search row) below
-   * the nav bar. Adopts the real InputSearch out of the header while active;
-   * the disposer restores it to the header so Classic keeps its original
-   * structure. Mounted/unmounted reactively with the design system.
+   * The Material 3 navigation block (top app bar label + adopted search row)
+   * below the nav bar — the M3 vertical slice. Adopts the real InputSearch
+   * out of the header while active; the disposer restores it to the header
+   * so Classic keeps its original structure. Mounted/unmounted reactively
+   * with the design system.
    */
-  private mountCupertinoNav() {
+  private mountMaterial3Nav() {
     const host = document.createElement('div');
     this.chatListContainer.prepend(host);
     const inputSearchContainer = this.inputSearch.container;
     const disposer = render(
-      () => createComponent(CupertinoSidebarNav, {
+      () => createComponent(Material3SidebarNav, {
         titleKey: 'FilterChats',
-        searchContainer: inputSearchContainer
+        searchContainer: inputSearchContainer,
+        onSearchTrigger: () => (this.inputSearch.input as HTMLInputElement).focus()
       }),
       host
     );
@@ -217,16 +219,16 @@ export class AppSidebarLeft extends SidebarSlider {
     const sidebarHeader = this.sidebarEl.querySelector('.item-main .sidebar-header');
     sidebarHeader.append(this.inputSearch.container);
 
-    // Cupertino navigation block (large title + search row): mounted and
-    // unmounted reactively with the interface style, so Classic and
-    // Material 3 never carry it.
+    // Material 3 navigation block (top app bar label + search row): mounted
+    // and unmounted reactively with the interface style, so Classic never
+    // carries it.
     createRoot(() => {
       createEffect(on(useDesignSystem()[0], (designSystem) => {
-        if(designSystem === 'cupertino') {
-          this.cupertinoNavDisposer ??= this.mountCupertinoNav();
+        if(designSystem === 'material3') {
+          this.material3NavDisposer ??= this.mountMaterial3Nav();
         } else {
-          this.cupertinoNavDisposer?.();
-          this.cupertinoNavDisposer = undefined;
+          this.material3NavDisposer?.();
+          this.material3NavDisposer = undefined;
         }
       }));
     });

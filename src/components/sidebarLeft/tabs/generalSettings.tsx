@@ -186,7 +186,6 @@ const InterfaceStyleSection = () => {
   const stateKey = joinDeepPath('settings', 'designSystem');
   const variants: [DesignSystemId, LangPackKey][] = [
     ['classic', 'InterfaceStyle.Classic'],
-    ['cupertino', 'InterfaceStyle.Cupertino'],
     ['material3', 'InterfaceStyle.Material3']
   ];
 

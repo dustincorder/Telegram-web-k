@@ -363,7 +363,7 @@ ul.chatlist {
     }
 
     @include respond-to(not-handhelds) {
-      &.active:where(html:not([data-design-system='cupertino']) .chatlist-chat) {
+      &.active {
         --background: var(--primary-color) !important;
         //background: var(--light-secondary-text-color);
 

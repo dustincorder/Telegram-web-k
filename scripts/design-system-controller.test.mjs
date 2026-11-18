@@ -21,6 +21,7 @@ const rootScopeUrl = 'data:text/javascript,' + encodeURIComponent(`
 const aliases = {
   '@lib/rootScope': rootScopeUrl,
   '@config/designSystem': new URL('../src/config/designSystem.ts', import.meta.url).href,
+  '@lib/designSystems/material3': new URL('../src/lib/designSystems/material3.ts', import.meta.url).href,
   '@helpers/mediaSizes': 'data:text/javascript,export default {isMobile:false,isLessThanFloatingLeftSidebar:false,addEventListener(){}}',
   '@helpers/number/clamp': new URL('../src/helpers/number/clamp.ts', import.meta.url).href,
   '@helpers/schedulers/throttle': 'data:text/javascript,export default function throttle(callback){return callback}',
@@ -30,7 +31,13 @@ const aliases = {
 };
 const hook = registerHooks({
   resolve(specifier, context, nextResolve) {
-    return aliases[specifier] ? {url: aliases[specifier], shortCircuit: true} : nextResolve(specifier, context);
+    if(aliases[specifier]) return {url: aliases[specifier], shortCircuit: true};
+    // The Material web components are stubbed: this suite exercises the
+    // switching and loading gates, not the component library itself.
+    if(specifier.startsWith('@material/web')) {
+      return {url: 'data:text/javascript,export {}', shortCircuit: true};
+    }
+    return nextResolve(specifier, context);
   }
 });
 const {default: rootScope} = await import(rootScopeUrl);
@@ -64,14 +71,14 @@ function selectionChanged(value) {
 
 test('radio settings events switch all interfaces immediately, including back to Classic', () => {
   initializeDesignSystemController('classic');
-  for(const value of ['cupertino', 'material3', 'classic', 'cupertino']) {
+  for(const value of ['material3', 'classic', 'material3']) {
     selectionChanged(value);
     assert.equal(document.documentElement.dataset.designSystem, value);
   }
 });
 
 test('startup restores each persisted style without altering the saved theme', () => {
-  for(const designSystem of ['cupertino', 'material3', 'classic']) {
+  for(const designSystem of ['material3', 'classic']) {
     // Same input as bootstrap after reading commonStateStorage settings on reload.
     const persistedSettings = {designSystem, theme: 'night'};
     initializeDesignSystemController(persistedSettings.designSystem);
@@ -80,9 +87,9 @@ test('startup restores each persisted style without altering the saved theme', (
   }
 });
 
-test('missing or invalid persisted values and update values fall back to Classic', () => {
-  for(const invalid of [undefined, null, 'legacy', '', 42, {}]) {
-    initializeDesignSystemController('cupertino');
+test('missing or invalid persisted values fall back to Classic', () => {
+  for(const invalid of [undefined, null, 'cupertino'/* retired */, 'legacy', '', 42, {}]) {
+    initializeDesignSystemController('material3');
     initializeDesignSystemController(invalid);
     assert.equal(document.documentElement.dataset.designSystem, 'classic');
     initializeDesignSystemController('material3');
@@ -92,11 +99,23 @@ test('missing or invalid persisted values and update values fall back to Classic
 });
 
 test('color theme and unrelated settings events do not change the interface', () => {
-  initializeDesignSystemController('cupertino');
+  initializeDesignSystemController('material3');
   for(const key of [joinDeepPath('settings', 'theme'), joinDeepPath('settings', 'messagesTextSize')]) {
     rootScope.dispatchEventSingle('settings_updated', {key, value: 'classic', settings: {}});
-    assert.equal(document.documentElement.dataset.designSystem, 'cupertino');
+    assert.equal(document.documentElement.dataset.designSystem, 'material3');
   }
+});
+
+test('material web components load only while Material 3 is selected', async() => {
+  const {loadMaterial3Components} = await import(aliases['@lib/designSystems/material3']);
+  assert.equal(loadMaterial3Components('classic'), undefined,
+    'Classic must not pull the component library');
+  const first = loadMaterial3Components('material3');
+  assert.ok(first instanceof Promise, 'Material 3 loads the components');
+  assert.equal(loadMaterial3Components('material3'), first,
+    'repeated selections reuse the same load');
+  assert.equal(loadMaterial3Components('invalid'), undefined);
+  await first;
 });
 
 
@@ -105,16 +124,16 @@ test('layout notification follows the root marker and skips repeated selections'
   const listener = (value) => changes.push([value, document.documentElement.dataset.designSystem]);
   rootScope.addEventListener('design_system_changed', listener);
   try {
-    initializeDesignSystemController('cupertino');
-    initializeDesignSystemController('cupertino');
+    initializeDesignSystemController('material3');
+    initializeDesignSystemController('material3');
     initializeDesignSystemController('classic');
-    assert.deepEqual(changes, [['cupertino', 'cupertino'], ['classic', 'classic']]);
+    assert.deepEqual(changes, [['material3', 'material3'], ['classic', 'classic']]);
   } finally {
     rootScope.removeEventListener('design_system_changed', listener);
   }
 });
 
-test('live layout switching removes Cupertino gutters and restores Classic geometry', async() => {
+test('both designs share the standard column geometry across live switches', async() => {
   const originals = new Map(['localStorage', 'getComputedStyle'].map((key) => [key, Object.getOwnPropertyDescriptor(globalThis, key)]));
   const properties = new Map();
   const centerProperties = new Map();
@@ -136,17 +155,16 @@ test('live layout switching removes Cupertino gutters and restores Classic geome
     setFoldersSidebarShown(true);
     assert.equal(properties.get('--folders-sidebar-offset'), '80px');
 
-    // Emit the real setting update: controller -> marker -> geometry listener.
-    selectionChanged('cupertino');
-    assert.equal(properties.get('--page-chats-padding'), '0px');
-    assert.equal(centerProperties.get('--page-chats-padding'), '0px');
-    assert.equal(properties.get('--middle-column-width'), '1440px');
-    assert.equal(properties.get('--folders-sidebar-offset'), '72px');
-    assert.equal(getDesignSystemLayout('cupertino', false).topbarPlateGap, 0);
-    assert.equal(getDesignSystemLayout('cupertino', false).historyTop, 48);
-    assert.equal(getDesignSystemLayout('cupertino', false).historyBottom, 56);
-    setFoldersSidebarShown(false);
-    assert.equal(bodyClasses.get('right-column-floats'), false);
+    // Material 3 restyles surfaces and controls; it does not relayout the
+    // columns, so every switch keeps the Classic geometry.
+    selectionChanged('material3');
+    assert.equal(properties.get('--page-chats-padding'), '16px');
+    assert.equal(centerProperties.get('--page-chats-padding'), '16px');
+    assert.equal(properties.get('--folders-sidebar-offset'), '80px');
+    assert.equal(getDesignSystemLayout('material3', false).topbarPlateGap, 8);
+    assert.equal(getDesignSystemLayout('material3', false).historyTop, 72);
+    assert.equal(getDesignSystemLayout('material3', false).historyBottom, 64);
+
     setUserPreferredLeft(0);
     assert.equal(properties.get('--left-column-width'), '80px');
     setOpenTabsLeftSidebar(true);
@@ -158,30 +176,23 @@ test('live layout switching removes Cupertino gutters and restores Classic geome
     // Reclaim only the available space, even with a user-resized docked sidebar.
     viewport.innerWidth = 1000;
     setUserPreferredLeft(480);
-    assert.equal(properties.get('--chat-width'), '448px');
+    assert.equal(properties.get('--chat-width'), '392px');
     setUserPreferredLeft(360);
     viewport.innerWidth = 1440;
-    selectionChanged('material3');
-    assert.equal(properties.get('--page-chats-padding'), '16px');
-    assert.equal(centerProperties.get('--page-chats-padding'), '16px');
-    assert.equal(properties.get('--folders-sidebar-offset'), '80px');
-    assert.equal(getDesignSystemLayout('material3', false).topbarPlateGap, 8);
-    assert.equal(getDesignSystemLayout('material3', false).historyTop, 72);
-    assert.equal(getDesignSystemLayout('material3', false).historyBottom, 64);
 
     mediaSizes.isMobile = true;
     viewport.innerWidth = 390;
     updateColumnWidths();
     assert.equal(properties.get('--page-chats-padding'), '0px');
     assert.equal(centerProperties.get('--page-chats-padding'), '8px');
-    selectionChanged('cupertino');
-    assert.equal(centerProperties.get('--page-chats-padding'), '0px');
     assert.equal(properties.get('--chat-width'), '390px');
     selectionChanged('classic');
     assert.equal(centerProperties.get('--page-chats-padding'), '8px');
     assert.equal(getDesignSystemLayout('invalid', false).columnGutter, 16);
     assert.equal(getDesignSystemLayout('classic', true).historyTop, 56);
     assert.equal(getDesignSystemLayout('classic', true).historyBottom, 56);
+    assert.equal(getDesignSystemLayout('material3', true).historyTop, 56);
+    assert.equal(getDesignSystemLayout('material3', true).historyBottom, 56);
   } finally {
     for(const [key, descriptor] of originals) {
       if(descriptor) Object.defineProperty(globalThis, key, descriptor);

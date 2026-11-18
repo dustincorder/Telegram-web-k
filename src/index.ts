@@ -35,7 +35,7 @@ import {parseUriParamsLine} from '@helpers/string/parseUriParams';
 import getWebAuthImport from '@lib/accounts/getWebAuthImport';
 import Modes from '@config/modes';
 import {AuthState} from '@types';
-import DEBUG, {IS_BETA, IS_CUPERTINO_PREVIEW, IS_POPUP_SANDBOX, IS_WIDGET_SANDBOX} from '@config/debug';
+import DEBUG, {IS_BETA, IS_POPUP_SANDBOX, IS_WIDGET_SANDBOX} from '@config/debug';
 import IS_INSTALL_PROMPT_SUPPORTED from '@environment/installPrompt';
 import cacheInstallPrompt from '@helpers/dom/installPrompt';
 import {fillLocalizedDates} from '@helpers/date';
@@ -470,13 +470,6 @@ if(import.meta.env.DEV || import.meta.env.VITE_PREVIEW) {
     await import('@components/popupSandbox/bootstrapState');
     const {startWidgetSandbox} = await import('@components/widgetSandbox/sandbox');
     await startWidgetSandbox();
-    return;
-  }
-
-  // ?cupertinoPreview=1 — isolated design-system fixtures, before any session or manager is restored.
-  if(import.meta.env.DEV && IS_CUPERTINO_PREVIEW) {
-    const {startCupertinoPreview} = await import('@components/cupertinoPreview');
-    await startCupertinoPreview();
     return;
   }
 

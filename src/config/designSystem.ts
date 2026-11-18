@@ -1,4 +1,4 @@
-export const DESIGN_SYSTEM_IDS = ['classic', 'cupertino', 'material3'] as const;
+export const DESIGN_SYSTEM_IDS = ['classic', 'material3'] as const;
 
 export type DesignSystemId = typeof DESIGN_SYSTEM_IDS[number];
 
@@ -14,13 +14,15 @@ export const normalizeDesignSystemId = (value: unknown): DesignSystemId => {
 
 /** Geometry shared by the width owner and the design-system components. */
 export const getDesignSystemLayout = (value: unknown, isMobile: boolean) => {
-  const cupertino = normalizeDesignSystemId(value) === 'cupertino';
+  // Both Classic and Material 3 keep the standard Web K geometry: the M3
+  // design system restyles surfaces and controls, it does not relayout the
+  // columns. A future geometry policy for Material 3 branches here.
   return {
-    columnGutter: cupertino ? 0 : 16,
-    chatInset: cupertino ? 0 : isMobile ? 8 : 16,
-    foldersGap: cupertino ? 0 : 8,
-    topbarPlateGap: cupertino ? 0 : 8,
-    historyTop: cupertino ? 48 : isMobile ? 56 : 72,
-    historyBottom: cupertino || isMobile ? 56 : 64
+    columnGutter: 16,
+    chatInset: isMobile ? 8 : 16,
+    foldersGap: 8,
+    topbarPlateGap: 8,
+    historyTop: isMobile ? 56 : 72,
+    historyBottom: isMobile ? 56 : 64
   };
 };
