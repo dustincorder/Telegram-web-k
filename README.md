@@ -17,7 +17,8 @@ Open http://localhost:8080/ in your browser.
 
 #### Running in production
 
-Run `pnpm build` to run the repository tests and type checks, produce the minimized Vite bundle, and write it to `dist/`.
+Run `pnpm build` to run type checks, produce the minimized Vite bundle, and write it to `dist/`.
+The comprehensive test suite is available separately with `pnpm run test:ci`.
 Cloudflare Pages deploys `dist/` directly at the domain root. Fork-specific setup is documented in `docs/FORK_DEVELOPMENT.md`.
 
 ### Running in docker
