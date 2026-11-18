@@ -1,5 +1,3 @@
-@use "../../shared" as *;
-
 @mixin styles {
   #column-left,
   #column-right {
@@ -15,8 +13,25 @@
     border-inline-start: 1px solid var(--cupertino-separator);
   }
 
+  .pinned-audio,
+  .pinned-call {
+    inset-inline: var(--chat-pane-inline-inset, 0px);
+    max-width: none;
+    border-radius: 0;
+    box-shadow: none;
+    border-block-end: 1px solid var(--cupertino-separator);
+  }
+
+  .topbar-floating-plates {
+    border-radius: 0;
+    box-shadow: none;
+    border-block-end: 1px solid var(--cupertino-separator);
+  }
+
   .sidebar-header,
   .main-search-sidebar-header {
+    border-radius: 0;
+    background-color: var(--surface-color);
     border-block-end: 1px solid var(--cupertino-separator);
   }
 
@@ -29,8 +44,12 @@
 
   .topbar {
     --topbar-box-shadow: none;
-    border: 1px solid var(--cupertino-separator);
-    border-radius: var(--cupertino-radius-group);
+    // Same pane bounds as the history scroll region; message width stays capped.
+    inset-inline: var(--chat-pane-inline-inset, 0px);
+    max-width: none;
+    border: 0;
+    border-block-end: 1px solid var(--cupertino-separator);
+    border-radius: 0;
 
     .peer-title,
     .user-title {
@@ -59,25 +78,24 @@
   }
 
   .folders-sidebar {
+    --folders-sidebar-item-color: var(--secondary-text-color);
+    --folders-sidebar-item-selected-color: var(--primary-color);
     background-color: var(--surface-color);
     box-shadow: none;
     border-inline-end: 1px solid var(--cupertino-separator);
 
+    &__background {
+      // The rail is navigation chrome, independent of the chat wallpaper.
+      display: none;
+    }
+
     &__folder-item {
-      border-radius: var(--cupertino-radius-control);
+      border-radius: 0;
 
       &--selected {
         color: var(--primary-color);
         background-color: var(--cupertino-selected);
       }
-    }
-  }
-
-  @include respond-to(handhelds) {
-    .topbar {
-      border: 0;
-      border-block-end: 1px solid var(--cupertino-separator);
-      border-radius: 0;
     }
   }
 }

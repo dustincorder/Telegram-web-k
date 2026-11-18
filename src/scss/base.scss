@@ -33,7 +33,7 @@
 :root {
   --vh: 1vh;
   // --page-chats-padding is owned by helpers/updateColumnWidths.ts — single
-  // JS-driven signal (16 on desktop, 8 on handheld). Don't reintroduce a
+  // JS-driven signal (Classic: 16 desktop / 8 handheld; Cupertino: 0). Don't reintroduce a
   // SCSS @media override here; consumers in chat / sidebars / bubble math
   // depend on the value being the same at every scope.
   --100vh: calc(var(--vh) * 100);

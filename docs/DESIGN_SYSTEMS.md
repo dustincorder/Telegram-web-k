@@ -100,3 +100,39 @@ No dependencies were installed and no application, build, browser, screenshots,
 Vitest, popup, focus, accessibility or editor e2e suites were run. Cloudflare
 build results and runtime review in light/dark, LTR/RTL, desktop/mobile and reduced
 motion are still required before calling the interface visually validated.
+
+## Flat Cupertino navigation (iOS 15–18)
+
+The reference period is pre-2025: Apple's [Designed for iPad (2020)](https://developer.apple.com/videos/play/wwdc2020/10206/),
+[Lists in UICollectionView (2020)](https://developer.apple.com/videos/play/wwdc2020/10026/)
+and [Explore navigation design for iOS (2022)](https://developer.apple.com/videos/play/wwdc2022/10001/).
+The design uses split-view navigation, plain full-width chat rows with separators
+aligned to the text, and inset groups for settings. The current HIG also covers
+Liquid Glass, so it is not the visual specification for these surfaces.
+
+`getDesignSystemLayout` supplies the geometry to `updateColumnWidths`: Cupertino
+has no outer column gutters or folder-rail gap. The controller emits the local
+`design_system_changed` event after applying the root marker so geometry and
+visible header accessories update when switching styles, without a reload.
+Classic/Material keep their previous 16px desktop / 8px chat-on-phone geometry.
+
+`--chat-pane-inline-inset` is the single CSS boundary for the scroll region and
+Cupertino's full-width toolbar/audio/call bars. Message width remains separately
+capped by `--chat-width`. Header accessories attach without a card gap; their
+height reservation uses the same policy as their CSS. The chat history also
+uses that policy for its top/bottom spacers, including immediate style changes;
+popup preview spacers remain unchanged. Columns, headers, folder
+rails and selected chat rows have straight edges; avatars, bubbles, controls,
+menus, settings groups and dialogs retain their component-specific radii.
+Classic's inverse selected-row palette is excluded only for Cupertino, which
+uses a tinted full-row selection and retains normal badge/mute/pin semantics.
+Virtualized row heights and avatar/checkbox bounds stay unchanged.
+
+Mobile retains the existing single-column navigation/back stack and safe-area
+handling. No new tab bar is introduced: the app has no independent top-level tab
+stacks, and folder filters are not top-level destinations. Existing animation
+levels and focus helpers continue to own transitions and keyboard behavior.
+The controller's dependency-free regression script also exercises the actual
+width helper across style changes, resized/collapsed sidebars, folder rails and
+mobile sizes. Browser layout, contrast, RTL, focus, media/call accessories and
+Cloudflare builds still need runtime verification.

@@ -17,6 +17,18 @@
     font-weight: 500;
   }
 
+  .chat {
+    --chat-padding-bottom: calc(var(--chat-input-height) + .5rem);
+  }
+
+  .chat-input-main {
+    bottom: .5rem;
+  }
+
+  .chat-input-container {
+    --padding-horizontal: .5rem;
+  }
+
   .chat-input-wrapper {
     --chat-input-border-radius: 1.25rem;
     border: 1px solid var(--cupertino-separator);

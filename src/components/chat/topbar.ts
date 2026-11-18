@@ -3,6 +3,7 @@ import type {AppSidebarRight} from '@components/sidebarRight';
 import type Chat from '@components/chat/chat';
 import {LEFT_COLUMN_ACTIVE_CLASSNAME} from '@lib/appColumns';
 import mediaSizes, {ScreenSize} from '@helpers/mediaSizes';
+import {getDesignSystemLayout} from '@config/designSystem';
 import rootScope, {BroadcastEvents} from '@lib/rootScope';
 import ButtonIcon from '@components/buttonIcon';
 import ButtonMenuToggle from '@components/buttonMenuToggle';
@@ -250,6 +251,7 @@ export default class ChatTopbar {
     // * fix topbar overflow section
 
     this.listenerSetter.add(window)('resize', this.onResize);
+    this.listenerSetter.add(rootScope)('design_system_changed', this.setFloating);
     this.listenerSetter.add(mediaSizes)('changeScreen', this.onChangeScreen);
 
     attachClickEvent(this.container, (e) => {
@@ -1588,7 +1590,7 @@ export default class ChatTopbar {
       this.pinnedMessage,
       ...(this.plates?.all || [])
     ].filter(Boolean);
-    const TOPBAR_GAP = 8;
+    const TOPBAR_GAP = getDesignSystemLayout(document.documentElement.dataset.designSystem, mediaSizes.isMobile).topbarPlateGap;
     const PLATE_DIVIDER = 1;
 
     const visible = containers.filter((container) => container.isVisible());

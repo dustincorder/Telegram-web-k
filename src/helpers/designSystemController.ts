@@ -6,8 +6,9 @@ import {joinDeepPath} from '@helpers/object/setDeepProperty';
 export const applyDesignSystem = (value: unknown): DesignSystemId => {
   const designSystem = normalizeDesignSystemId(value);
   const root = typeof document === 'undefined' ? undefined : document.documentElement;
-  if(root) {
+  if(root && root.dataset.designSystem !== designSystem) {
     root.dataset.designSystem = designSystem;
+    rootScope.dispatchEventSingle('design_system_changed', designSystem);
   }
 
   return designSystem;

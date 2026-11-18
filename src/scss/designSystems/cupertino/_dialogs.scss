@@ -2,27 +2,37 @@
 
 @mixin styles {
   ul.chatlist {
-    padding-inline: .5rem;
+    padding-inline: 0;
+  }
+
+  .virtual-chatlist {
+    margin-inline: 0 !important;
   }
 
   .chatlist-chat {
-    border-radius: var(--cupertino-radius-control);
+    border-radius: 0;
 
     // Do not change virtualized row heights (72px / 82px with folder tags),
     // avatar bounds, or selection-lane transforms independently of the list.
-    .dialog-title {
+    .dialog-title .user-title {
       font-size: var(--font-size-16);
       font-weight: 600;
     }
 
-    .dialog-subtitle {
-      font-size: var(--font-size-14);
+    .dialog-subtitle .row-subtitle {
+      font-size: var(--font-size-15) !important;
       color: var(--secondary-text-color);
     }
 
     .dialog-title-details {
       font-size: var(--font-size-12);
       font-variant-numeric: tabular-nums;
+    }
+
+    .dialog-title-details .dialog-time-pill {
+      padding: 0;
+      border-radius: 0;
+      background-color: transparent;
     }
 
     &:not(.active):not(.is-selected) {
@@ -42,7 +52,7 @@
     &:not(:last-child)::after {
       content: '';
       position: absolute;
-      inset-inline: 4.5rem .75rem;
+      inset-inline: 4.5rem 0;
       inset-block-end: 0;
       border-block-end: 1px solid var(--cupertino-separator);
       pointer-events: none;
@@ -53,22 +63,27 @@
       border-color: transparent;
     }
 
-    // Retain upstream's complete white-on-accent selection palette, including
-    // stories, verified marks, typing, pinned times and muted badges.
-    @include respond-to(not-handhelds) {
-      &.active {
-        --background: var(--primary-color) !important;
-      }
+    // Cupertino uses a full-width tinted selection. The Classic inverse
+    // palette is gated in the primitive, so icons and muted badges keep theirs.
+    &.active {
+      --background: var(--cupertino-selected) !important;
+    }
+
+    .dialog-subtitle-badge-unread:not(.not-visited) {
+      --size: 1.25rem;
+      --padding: .375rem;
+      font-size: var(--font-size-12);
+      font-weight: 500;
     }
   }
 
   @include respond-to(handhelds) {
-    ul.chatlist {
-      padding-inline: 0;
+    .chatlist-chat .dialog-title .user-title {
+      font-size: 1.0625rem;
     }
 
-    .chatlist-chat {
-      border-radius: 0;
+    .chatlist-chat:not(:last-child)::after {
+      inset-inline-start: 4rem;
     }
   }
 }

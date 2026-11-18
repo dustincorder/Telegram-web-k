@@ -11,3 +11,16 @@ export const isDesignSystemId = (value: unknown): value is DesignSystemId => {
 export const normalizeDesignSystemId = (value: unknown): DesignSystemId => {
   return isDesignSystemId(value) ? value : DEFAULT_DESIGN_SYSTEM;
 };
+
+/** Geometry shared by the width owner and the design-system components. */
+export const getDesignSystemLayout = (value: unknown, isMobile: boolean) => {
+  const cupertino = normalizeDesignSystemId(value) === 'cupertino';
+  return {
+    columnGutter: cupertino ? 0 : 16,
+    chatInset: cupertino ? 0 : isMobile ? 8 : 16,
+    foldersGap: cupertino ? 0 : 8,
+    topbarPlateGap: cupertino ? 0 : 8,
+    historyTop: cupertino ? 48 : isMobile ? 56 : 72,
+    historyBottom: cupertino || isMobile ? 56 : 64
+  };
+};

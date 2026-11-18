@@ -269,8 +269,8 @@ export function startCupertinoPreview() {
     close: () => {
       dispose();
       container.remove();
+      applyDesignSystem(previousSystem);
       if(previousSystem === undefined) delete root.dataset.designSystem;
-      else root.dataset.designSystem = previousSystem;
       if(previousDirection === null) root.removeAttribute('dir');
       else root.setAttribute('dir', previousDirection);
       root.classList.toggle('night', previousNight);
