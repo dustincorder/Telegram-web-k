@@ -1,4 +1,6 @@
-import {createEffect, createRoot, createSignal, createUniqueId, on} from 'solid-js';
+import {createComponent, createEffect, createRoot, createSignal, createUniqueId, on} from 'solid-js';
+import {render} from 'solid-js/web';
+import CupertinoLargeTitle from '@components/cupertino/largeTitle';
 import appImManager from '@lib/appImManager';
 import rootScope from '@lib/rootScope';
 import {createSearchGroup, getSearchTransitionDuration, SearchGroup} from '@components/searchGroup';
@@ -161,7 +163,17 @@ export class AppSidebarLeft extends SidebarSlider {
   private hasUpdate: boolean;
 
   private onResize: () => void;
-  private largeTitle: HTMLElement;
+  private largeTitleDisposer: () => void;
+
+  private mountLargeTitle() {
+    const host = document.createElement('div');
+    this.chatListContainer.prepend(host);
+    const disposer = render(
+      () => createComponent(CupertinoLargeTitle, {key: 'FilterChats'}),
+      host
+    );
+    return disposer;
+  }
 
   constructor() {
     super({
@@ -180,18 +192,11 @@ export class AppSidebarLeft extends SidebarSlider {
     const sidebarHeader = this.sidebarEl.querySelector('.item-main .sidebar-header');
     sidebarHeader.append(this.inputSearch.container);
 
-    // Cupertino-only large navigation title (iOS-style). Lives inside the
-    // chat-list transition item so it hides with the list (search, other tabs);
-    // the stylesheet keeps it `display: none` outside the cupertino boundary.
-    // Hidden by aria-hidden: it duplicates the list heading for assistive tech.
-    this.largeTitle = document.createElement('div');
-    this.largeTitle.className = 'cupertino-large-title';
-    this.largeTitle.setAttribute('aria-hidden', 'true');
-    const largeTitleText = document.createElement('span');
-    largeTitleText.classList.add('cupertino-large-title-text');
-    largeTitleText.textContent = I18n.format('FilterChats', true);
-    this.largeTitle.append(largeTitleText);
-    this.chatListContainer.prepend(this.largeTitle);
+    // Cupertino large navigation title: a Solid component so it mounts and
+    // unmounts with the design system, with reactive localized text. Mounted
+    // inside the chat-list transition item so it hides with the list (search,
+    // other tabs); the component renders nothing outside the cupertino style.
+    this.largeTitleDisposer = this.mountLargeTitle();
 
     this.backBtn = this.sidebarEl.querySelector('.sidebar-back-button') as HTMLButtonElement;
     this.backBtn.setAttribute('aria-label', I18n.format('StarsRating.Back', true));

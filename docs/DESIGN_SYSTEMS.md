@@ -146,12 +146,15 @@ Two structural fixes define the current implementation:
    fourth, so its rules lost the cascade against ~90 later partials at equal
    specificity — the main reason the Cupertino selection barely changed the
    rendered interface.
-2. **Large navigation title.** `AppSidebarLeft` renders a
-   `.cupertino-large-title` element (localized via the existing
-   `FilterChats` key) as the first child of `#chatlist-container`, so it
-   hides with the list during search and tab navigation. The stylesheet keeps
-   it `display: none` outside the Cupertino boundary and reveals it inside
-   `html[data-design-system='cupertino']` as a 30px/700-weight large title —
-   the clearly identifiable implementation marker between Classic and
-   Cupertino. It is `aria-hidden` (it duplicates the list heading) and hides
-   when the sidebar is collapsed.
+2. **Large navigation title.** `CupertinoLargeTitle`
+   (`src/components/cupertino/largeTitle.tsx`) is a design-system-aware Solid
+   component: it mounts only while the Cupertino style is active (reading
+   `stores/designSystem.ts`, a signal fed by the controller's
+   `design_system_changed` event) and unmounts entirely for Classic and
+   Material 3 — no default-hide CSS rule is needed. `AppSidebarLeft` mounts
+   it as the first child of `#chatlist-container`, so it hides with the list
+   during search and tab navigation. The localized text is reactive
+   (`i18n`), it is `aria-hidden` (it duplicates the list heading), and it
+   hides when the sidebar is collapsed. This is the clearly identifiable
+   implementation marker between Classic and Cupertino: a 30px/700-weight
+   large title in the sidebar.

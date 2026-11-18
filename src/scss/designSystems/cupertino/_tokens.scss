@@ -6,11 +6,10 @@
   --topbar-plates-gap: 0px;
   --plates-gap: 0px;
   --ds-font-weight-emphasis: 600;
-  --ds-popup-radius: .875rem;
+  --ds-popup-radius: var(--cupertino-radius-popover);
 
   // iOS metrics. One hairline color for every separator in the interface;
   // chrome is square, bubbles keep a soft corner.
-  --cupertino-navbar-height: 48px;
   --cupertino-hairline: color-mix(in srgb, var(--secondary-text-color) 22%, transparent);
   --cupertino-radius-control: .625rem;
   --cupertino-radius-group: .75rem;
