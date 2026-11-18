@@ -26,6 +26,7 @@ import ChatThemesPicker from '@components/chatThemesPicker';
 import ChatBackgroundStore from '@lib/chatBackgroundStore';
 import appDownloadManager from '@lib/appDownloadManager';
 import {hotReloadGuard} from '@lib/solidjs/hotReloadGuardProvider';
+import type {DesignSystemId} from '@config/designSystem';
 
 // ─────────────────────────────────────────────────────────────────────────────
 // Section 1 — text size, chat background, animations toggle, lite mode entry
@@ -177,6 +178,30 @@ const ThemeSection = () => {
       <GrowHeightReveal when={isDark()} appear={false} class="accent-picker-frame">
         <AccentPickerRow />
       </GrowHeightReveal>
+    </Section>
+  );
+};
+
+const InterfaceStyleSection = () => {
+  const stateKey = joinDeepPath('settings', 'designSystem');
+  const variants: [DesignSystemId, LangPackKey][] = [
+    ['classic', 'InterfaceStyle.Classic'],
+    ['cupertino', 'InterfaceStyle.Cupertino'],
+    ['material3', 'InterfaceStyle.Material3']
+  ];
+
+  return (
+    <Section name="InterfaceStyle">
+      <form>
+        {variants.map(([value, langKey]) => (
+          <Row>
+            <Row.RadioField>
+              <RadioFieldTsx name="interface-style" value={value} stateKey={stateKey} />
+            </Row.RadioField>
+            <Row.Title>{i18n(langKey)}</Row.Title>
+          </Row>
+        ))}
+      </form>
     </Section>
   );
 };
@@ -353,6 +378,7 @@ const GeneralSettings = () => {
     <>
       <SettingsSection />
       <ThemeSection />
+      <InterfaceStyleSection />
       {IS_GEOLOCATION_SUPPORTED && <DistanceUnitsSection />}
       <TimeFormatSection />
     </>

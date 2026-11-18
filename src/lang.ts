@@ -3013,6 +3013,10 @@ const lang = {
     'other_value': '%d chats'
   },
   'ColorTheme': 'Color theme',
+  'InterfaceStyle': 'Interface style',
+  'InterfaceStyle.Classic': 'Classic',
+  'InterfaceStyle.Cupertino': 'Cupertino',
+  'InterfaceStyle.Material3': 'Material 3',
   'SendAsFile': 'Send as file',
   'SendAsFiles': 'Send as files',
   'ChatThemeChangedYou': 'You changed the chat theme to %1$s',
@@ -6848,6 +6852,7 @@ const lang = {
   'FolderShowTags.SearchKeywords': 'tags, labels, colors, folder names',
   'ColorTheme.SearchKeywords': 'theme, colour, accent, dark mode, night mode',
   'TextSize.SearchKeywords': 'font, text size, bigger, smaller',
+  'InterfaceStyle.SearchKeywords': 'interface, appearance, design, style, classic, cupertino, material 3',
   'LiteMode.EnableText.SearchKeywords': 'power saving, battery, animations, performance',
   'LiteMode.Key.motion.Title.SearchKeywords': 'reduce motion, reduced animations, slide, zoom, transitions, fade',
   'General.TimeFormat.SearchKeywords': 'clock, 24 hour, 12 hour, am, pm',
