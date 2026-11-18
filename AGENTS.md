@@ -13,9 +13,9 @@ file — edit AGENTS.md, never CLAUDE.md.
   DNS changes, or Cloudflare secrets to application source.
 - The Cloudflare build command is `pnpm run build`; the output directory is
   `dist/`. Node 22.18.0 or a compatible Node 24 release is required.
-- Keep `vite.config.ts`'s root-relative assets and `copyPublicDir: true`.
-  Workers, Wasm, manifests, PWA assets and static HTML must remain deployable
-  under the Pages root.
+- Keep `vite.config.ts`'s root-relative assets and curated static-public-asset
+  copy. Workers, Wasm, manifests, PWA assets and static HTML must remain
+  deployable under the Pages root without copying obsolete hashed bundles.
 - UI changes must use existing Solid components, theme variables, CSS modules,
   i18n strings and accessibility/RTL helpers. Keep changed UI behind existing
   `Modes.a11y`/animation behavior and verify it in LTR and RTL.

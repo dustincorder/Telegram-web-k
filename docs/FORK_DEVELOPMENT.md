@@ -17,7 +17,9 @@ runtime.
 - `src/scss/` contains global styles; component styles live in neighboring
   `.module.scss` files.
 - `public/` contains static runtime assets, manifests, Wasm, workers and the
-  generated/public build output. Vite copies this directory into `dist/`.
+  previous checked-in production output. The Vite build copies only the
+  required static assets from this directory; current hashed modules come from
+  the build itself.
 - `vite.config.ts` contains the actual build configuration, aliases and worker
   settings.
 - `AGENTS.md` contains repository-wide AI-agent instructions.
@@ -61,12 +63,17 @@ Configure the project without custom build output transforms or worker bindings:
 
 Deploy only the checked-in application build. The build:
 
-1. Runs Vitest once.
-2. Generates types and runs TypeScript checks.
-3. Generates changelog files.
-4. Builds Vite output into `dist/`.
+1. Generates types and runs TypeScript checks.
+2. Generates changelog files.
+3. Builds Vite output into `dist/`.
+4. Copies required static assets from `public/` into `dist/` while excluding
+   stale hashed JavaScript, CSS and source maps.
 5. Checks the bundle.
-6. Copies static assets from `public/` into `dist/`.
+
+The comprehensive test suite remains available as `pnpm run test:ci` and the
+combined `pnpm run build:ci` command. Cloudflare Pages should use `pnpm run
+build` so deployments do not repeat thousands of tests; CI can use
+`pnpm run build:ci`.
 
 Keep asset URLs root-relative. The app registers its service worker with a
 relative scope and is intended to run at `/`; do not configure a subdirectory

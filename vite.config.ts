@@ -7,7 +7,7 @@ import basicSsl from '@vitejs/plugin-basic-ssl';
 // import devtools from 'solid-devtools/vite'
 import autoprefixer from 'autoprefixer';
 import {resolve} from 'path';
-import {existsSync, copyFileSync, readFileSync, realpathSync} from 'fs';
+import {existsSync, copyFileSync, readFileSync, realpathSync, readdirSync, mkdirSync} from 'fs';
 import {createHash} from 'crypto';
 import {Plugin, ServerOptions} from 'vite';
 import {vitestWorkers} from './scripts/testQueue';
@@ -257,6 +257,54 @@ function __waitForPreloadedCss(link, dep) {
   };
 }
 
+const PUBLIC_ROOT_RUNTIME_SCRIPTS = new Set([
+  'decoderWorker.min.js',
+  'encoderWorker.min.js',
+  'waveWorker.min.js'
+]);
+
+function copyDirectory(source: string, destination: string) {
+  mkdirSync(destination, {recursive: true});
+  for(const entry of readdirSync(source, {withFileTypes: true})) {
+    const sourcePath = path.join(source, entry.name);
+    const destinationPath = path.join(destination, entry.name);
+    if(entry.isDirectory()) copyDirectory(sourcePath, destinationPath);
+    else copyFileSync(sourcePath, destinationPath);
+  }
+}
+
+function copyStaticPublicAssets(): Plugin {
+  return {
+    name: 'copy-static-public-assets',
+    apply: 'build',
+    writeBundle(options) {
+      const outDir = options.dir || resolve(rootDir, 'dist');
+      for(const entry of readdirSync(path.join(rootDir, 'public'), {withFileTypes: true})) {
+        const sourcePath = path.join(rootDir, 'public', entry.name);
+        const destinationPath = path.join(outDir, entry.name);
+        if(entry.isDirectory()) {
+          copyDirectory(sourcePath, destinationPath);
+          continue;
+        }
+
+        // public/ also contains the last checked-in production bundle. Vite
+        // emits the current hashed modules and styles, so only retain static
+        // root assets and the workers whose URLs are intentionally stable.
+        const isGeneratedBundle = entry.name === 'index.html' ||
+          entry.name.endsWith('.js.map') ||
+          entry.name.endsWith('.css.map') ||
+          entry.name.endsWith('.map') ||
+          (entry.name.endsWith('.js') && !PUBLIC_ROOT_RUNTIME_SCRIPTS.has(entry.name)) ||
+          entry.name.endsWith('.css');
+        if(!isGeneratedBundle) {
+          mkdirSync(path.dirname(destinationPath), {recursive: true});
+          copyFileSync(sourcePath, destinationPath);
+        }
+      }
+    }
+  };
+}
+
 export default defineConfig({
   plugins: [
     // devtools({
@@ -272,6 +320,7 @@ export default defineConfig({
     handlebarsPlugin as any,
     compileHintsPlugin(),
     preloadHelperCssWaitPlugin(),
+    copyStaticPublicAssets(),
     USE_SELF_SIGNED_CERTS ? basicSsl(BASIC_SSL_CONFIG) : undefined,
     // Only emit the bundle treemap (stats.html) when explicitly analyzing (ANALYZE=1):
     // it adds build time and writes a ~1.3MB file that otherwise gets globbed into the
@@ -365,10 +414,10 @@ export default defineConfig({
     cssTarget: ['chrome87', 'edge87', 'firefox78', 'safari14.1'],
     sourcemap: true,
     assetsDir: '',
-    // Cloudflare Pages deploys dist/ directly. Copy public/ because this
-    // application keeps static workers, Wasm, manifests and other runtime
-    // assets outside the Vite module bundle.
-    copyPublicDir: true,
+    // public/ also contains the previous production bundle. Copy its static
+    // runtime assets through copyStaticPublicAssets() instead of copying
+    // obsolete hashed modules and source maps into the Pages output.
+    copyPublicDir: false,
     emptyOutDir: true,
     minify: NO_MINIFY ? false : undefined,
     rolldownOptions: {
