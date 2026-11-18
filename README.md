@@ -17,7 +17,8 @@ Open http://localhost:8080/ in your browser.
 
 #### Running in production
 
-Run `node build` to build the minimized production version of the app. Copy `public` folder contents to your web server.
+Run `pnpm build` to run the repository tests and type checks, produce the minimized Vite bundle, and write it to `dist/`.
+Cloudflare Pages deploys `dist/` directly at the domain root. Fork-specific setup is documented in `docs/FORK_DEVELOPMENT.md`.
 
 ### Running in docker
 

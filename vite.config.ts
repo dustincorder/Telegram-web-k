@@ -365,7 +365,10 @@ export default defineConfig({
     cssTarget: ['chrome87', 'edge87', 'firefox78', 'safari14.1'],
     sourcemap: true,
     assetsDir: '',
-    copyPublicDir: false,
+    // Cloudflare Pages deploys dist/ directly. Copy public/ because this
+    // application keeps static workers, Wasm, manifests and other runtime
+    // assets outside the Vite module bundle.
+    copyPublicDir: true,
     emptyOutDir: true,
     minify: NO_MINIFY ? false : undefined,
     rolldownOptions: {
