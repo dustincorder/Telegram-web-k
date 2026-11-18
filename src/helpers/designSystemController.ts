@@ -1,6 +1,7 @@
-import {normalizeDesignSystemId, DesignSystemId} from '@config/designSystem';
+import {normalizeDesignSystemId, type DesignSystemId} from '@config/designSystem';
 import rootScope from '@lib/rootScope';
 import {hotListen} from '@helpers/hotModule';
+import {joinDeepPath} from '@helpers/object/setDeepProperty';
 
 export const applyDesignSystem = (value: unknown): DesignSystemId => {
   const designSystem = normalizeDesignSystemId(value);
@@ -13,7 +14,7 @@ export const applyDesignSystem = (value: unknown): DesignSystemId => {
 };
 
 const onSettingsUpdated = ({key, value}: {key: string, value: unknown}) => {
-  if(key === 'settings.designSystem') {
+  if(key === joinDeepPath('settings', 'designSystem')) {
     applyDesignSystem(value);
   }
 };
