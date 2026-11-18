@@ -59,13 +59,15 @@ import listenForLinkPress from '@helpers/dom/linkPress';
 import {DeactivatedScreen, onStartImportFailed, showDeactivatedScreen} from '@/pages/deactivatedScreen';
 import PasscodeLockScreenController from '@components/passcodeLock/passcodeLockScreenController'; PasscodeLockScreenController;
 import commonStateStorage from '@lib/commonStateStorage';
-import {useAppSettings, setAppSettingsSilent} from '@stores/appSettings';
+import {useAppSettings, setAppSettings, setAppSettingsSilent} from '@stores/appSettings';
+import {normalizeDesignSystemId} from '@config/designSystem';
 import {isUserCollapsedLeft} from '@helpers/updateColumnWidths';
 import {useMediaSizes} from '@helpers/mediaSizes';
 import useHasFoldersSidebar, {useIsSidebarCollapsed} from '@stores/foldersSidebar';
 import appNavigationController from '@components/appNavigationController';
 import {preventCrossTabDynamicImportDeadlock} from '@helpers/preventDeadlock';
 import appChatBackground from '@components/chat/bubbles/chatBackground';
+import {initializeDesignSystemController, applyDesignSystem} from '@helpers/designSystemController';
 
 // import commonStateStorage from '@lib/commonStateStorage';
 // import { STATE_INIT } from '@config/state';
@@ -489,6 +491,7 @@ if(import.meta.env.DEV || import.meta.env.VITE_PREVIEW) {
   await PasscodeLockScreenController.waitForUnlock(async() => {
     const settings = await commonStateStorage.get('settings');
     settings && setAppSettingsSilent(settings);
+    initializeDesignSystemController(settings?.designSystem);
     themeController.setThemeListener();
 
     appChatBackground.attach();
@@ -512,6 +515,12 @@ if(import.meta.env.DEV || import.meta.env.VITE_PREVIEW) {
   // * (1)
   const allStates = await apiManagerProxy.loadAllStates();
   const stateResult = allStates[getCurrentAccount()];
+  const [settings] = useAppSettings();
+  const designSystem = normalizeDesignSystemId(settings.designSystem);
+  if(settings.designSystem !== designSystem) {
+    await setAppSettings('designSystem', designSystem);
+  }
+  applyDesignSystem(designSystem);
 
   // console.log(stateResult);
   // await pause(10000000);

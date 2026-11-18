@@ -152,6 +152,22 @@
   --font-weight-bold: 500;
   --font-weight-normal: 400;
   --font-weight: var(--font-weight-normal);
+  --ds-font-family: var(--font-regular);
+  --ds-design-system: classic;
+  --ds-font-weight: var(--font-weight);
+  --ds-font-weight-emphasis: var(--font-weight-bold);
+  --ds-font-size: var(--font-size);
+  --ds-line-height: var(--line-height);
+  --ds-color-background: var(--background-color);
+  --ds-color-surface: var(--surface-color);
+  --ds-color-text: var(--primary-text-color);
+  --ds-color-text-secondary: var(--secondary-text-color);
+  --ds-color-accent: var(--primary-color);
+  --ds-color-border: var(--border-color);
+  --ds-radius-control: #{$border-radius-medium};
+  --ds-radius-surface: #{$border-radius-big};
+  --ds-shadow-surface: var(--section-box-shadow);
+  --ds-transition-standard: var(--transition-standard-in);
   --selection-background-color: rgba(var(--primary-color-rgb), .4);
   --selection-color: inherit;
   --white: #ffffff;
@@ -242,6 +258,18 @@
   --passcode-lock-screen-z-index: 100000;
 
   --star-golden-color: #fecf16;
+}
+
+html[data-design-system='classic'] {
+  --ds-design-system: classic;
+}
+
+html[data-design-system='cupertino'] {
+  --ds-design-system: cupertino;
+}
+
+html[data-design-system='material3'] {
+  --ds-design-system: material3;
 }
 
 :root {

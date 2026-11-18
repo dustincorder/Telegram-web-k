@@ -15,6 +15,7 @@ import {FontKey} from '@components/mediaEditor/types';
 import type {BotConnectionReview} from '@appManagers/appBusinessManager';
 import type {UnconfirmedAuthorization} from '@appManagers/appAccountManager';
 import type {ContactsSortMode} from '@appManagers/utils/users/sortContacts';
+import type {DesignSystemId} from '@config/designSystem';
 
 // Factory tinted ("Dark") collapses onto the first base-color preset (blue) so the accent picker
 // can omit a separate "default" swatch — resetting to factory now reaches the same state the user
@@ -97,6 +98,7 @@ export type StateSettings = {
   background?: Background, // ! DEPRECATED
   themes: AppTheme[],
   theme: AppTheme['name'],
+  designSystem: DesignSystemId,
   increaseContrast: boolean,
   // Last explicitly-picked theme variant on each side. The burger-menu Dark-Mode toggle uses
   // these so toggling away and back returns to the same variant (e.g. tinted ↔ classic ↔ tinted)
@@ -524,6 +526,7 @@ export const SETTINGS_INIT: StateSettings = {
     makeDefaultAppTheme('light')
   ],
   theme: 'system',
+  designSystem: 'classic',
   increaseContrast: false,
   lastThemeNames: {
     dark: 'night',
