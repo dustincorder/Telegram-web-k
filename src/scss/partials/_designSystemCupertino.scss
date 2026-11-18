@@ -224,10 +224,6 @@ html[data-design-system='cupertino'] {
     border-radius: 0;
     padding-inline: .5rem !important;
 
-    .chat-info {
-      padding-inline-start: 2.75rem;
-    }
-
     .chat-utils {
       gap: .125rem;
     }
@@ -518,10 +514,8 @@ html[data-design-system='cupertino'] {
   }
 
   .tabs-container {
-    &[data-animation="navigation"] {
-      &.animating .tabs-tab {
-        will-change: transform, filter;
-      }
+    &[data-animation="navigation"].animating .tabs-tab {
+      transform: translateZ(0);
     }
   }
 

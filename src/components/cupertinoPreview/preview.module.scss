@@ -1,0 +1,490 @@
+.Preview {
+  --preview-background: #f2f2f7;
+  --preview-surface: #ffffff;
+  --preview-text: #1c1c1e;
+  --preview-secondary: #6c6c70;
+  --preview-accent: #007aff;
+  --preview-border: rgba(60, 60, 67, .18);
+  --preview-incoming: #e5e5ea;
+  --preview-outgoing: #d9fdd3;
+  min-height: 100vh;
+  padding: 1.25rem;
+  box-sizing: border-box;
+  background: var(--preview-background);
+  color: var(--preview-text);
+  font: 400 15px/1.35 -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+
+  &.dark {
+    --preview-background: #000;
+    --preview-surface: #1c1c1e;
+    --preview-text: #f2f2f7;
+    --preview-secondary: #98989f;
+    --preview-accent: #0a84ff;
+    --preview-border: rgba(235, 235, 245, .18);
+    --preview-incoming: #2c2c2e;
+    --preview-outgoing: #1f5d3b;
+  }
+
+  :global(html[data-design-system='cupertino']) & {
+    --ds-color-background: var(--preview-background);
+    --ds-color-surface: var(--preview-surface);
+    --ds-color-text: var(--preview-text);
+    --ds-color-text-secondary: var(--preview-secondary);
+    --ds-color-accent: var(--preview-accent);
+    --ds-color-border: var(--preview-border);
+  }
+}
+
+.light {
+  color-scheme: light;
+}
+
+.desktop {
+  color-scheme: light;
+}
+
+.mobile {
+  max-width: 430px;
+  margin: 0 auto;
+  padding: .5rem;
+
+  .AppFrame {
+    min-height: 780px;
+  }
+
+  .Sidebar {
+    display: none;
+  }
+
+  .Conversation {
+    grid-column: 1 / -1;
+  }
+}
+
+.PreviewToolbar,
+.SurfaceTabs {
+  display: flex;
+  align-items: center;
+  gap: .75rem;
+}
+
+.PreviewToolbar {
+  justify-content: space-between;
+  margin: 0 auto 1rem;
+  max-width: 1180px;
+
+  h1 {
+    margin: 0;
+    font-size: 1.35rem;
+    font-weight: 650;
+  }
+}
+
+.Eyebrow {
+  color: var(--preview-secondary);
+  font-size: .75rem;
+  text-transform: uppercase;
+  letter-spacing: .04em;
+}
+
+.ToolbarControls {
+  display: flex;
+  align-items: end;
+  gap: .5rem;
+
+  label {
+    display: grid;
+    gap: .2rem;
+    color: var(--preview-secondary);
+    font-size: .72rem;
+  }
+
+  select,
+  button {
+    min-height: 2rem;
+    border: 1px solid var(--preview-border);
+    border-radius: .6rem;
+    padding: .25rem .55rem;
+    background: var(--preview-surface);
+    color: var(--preview-text);
+  }
+}
+
+.SurfaceTabs {
+  max-width: 1180px;
+  margin: 0 auto .75rem;
+
+  button {
+    border: 0;
+    border-radius: 999px;
+    padding: .45rem .8rem;
+    background: transparent;
+    color: var(--preview-secondary);
+    cursor: pointer;
+
+    &.Selected {
+      background: color-mix(in srgb, var(--preview-accent) 14%, var(--preview-surface));
+      color: var(--preview-accent);
+    }
+  }
+}
+
+.AppFrame {
+  position: relative;
+  display: grid;
+  grid-template-columns: 19rem minmax(0, 1fr);
+  max-width: 1180px;
+  min-height: 680px;
+  margin: 0 auto;
+  overflow: hidden;
+  border: 1px solid var(--preview-border);
+  border-radius: 1rem;
+  background: var(--preview-surface);
+  box-shadow: 0 .75rem 2rem rgba(0, 0, 0, .12);
+}
+
+.Sidebar {
+  min-width: 0;
+  border-inline-end: 1px solid var(--preview-border);
+  background: var(--preview-surface);
+}
+
+.AppBar,
+.topbar {
+  display: flex;
+  align-items: center;
+  gap: .55rem;
+  min-height: 3.5rem;
+  padding: .5rem .75rem;
+  color: var(--preview-text);
+}
+
+.AppBar {
+  justify-content: space-between;
+  border-block-end: 1px solid var(--preview-border);
+}
+
+.btn-icon,
+.chat-utils button {
+  display: inline-grid;
+  place-items: center;
+  width: 2rem;
+  height: 2rem;
+  border: 0;
+  border-radius: 50%;
+  background: transparent;
+  color: var(--preview-accent);
+  cursor: pointer;
+}
+
+.Search {
+  margin: .65rem .75rem;
+  padding: .45rem .65rem;
+  border-radius: .55rem;
+  background: var(--preview-background);
+  color: var(--preview-secondary);
+}
+
+.folders-sidebar {
+  padding: 0 .5rem .5rem;
+}
+
+.folders-sidebar__folder-item {
+  padding: .4rem .65rem;
+  border-radius: .5rem;
+}
+
+.chatlist {
+  margin: 0;
+  padding: 0 .5rem;
+  list-style: none;
+}
+
+.chatlist-chat {
+  position: relative;
+  display: grid;
+  grid-template-columns: 2.7rem minmax(0, 1fr) auto;
+  align-items: center;
+  gap: .55rem;
+  min-height: 4.25rem;
+  padding: .4rem .35rem;
+}
+
+.Avatar {
+  display: grid;
+  place-items: center;
+  width: 2.4rem;
+  height: 2.4rem;
+  border-radius: 50%;
+  background: color-mix(in srgb, var(--preview-accent) 75%, #fff);
+  color: #fff;
+  font-weight: 650;
+}
+
+.DialogCopy {
+  min-width: 0;
+}
+
+.DialogCopy :global(.dialog-title),
+.DialogCopy :global(.dialog-subtitle) {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.DialogCopy :global(.dialog-title) {
+  font-weight: 600;
+}
+
+.DialogCopy :global(.dialog-subtitle),
+.DialogMeta {
+  color: var(--preview-secondary);
+  font-size: .82rem;
+}
+
+.DialogMeta {
+  display: grid;
+  justify-items: end;
+  gap: .25rem;
+}
+
+.DialogMeta :global(.unread) {
+  min-width: 1.2rem;
+  padding: .1rem .35rem;
+  border-radius: 999px;
+  background: var(--preview-accent);
+  color: #fff;
+  text-align: center;
+}
+
+.Conversation {
+  position: relative;
+  min-width: 0;
+  display: grid;
+  grid-template-rows: auto 1fr auto;
+  background: var(--preview-background);
+}
+
+.Conversation :global(.topbar) {
+  border-block-end: 1px solid var(--preview-border);
+  background: var(--preview-surface);
+}
+
+.Conversation :global(.chat-info) {
+  display: grid;
+  min-width: 0;
+  flex: 1;
+}
+
+.Conversation :global(.chat-info span) {
+  color: var(--preview-secondary);
+  font-size: .8rem;
+}
+
+.Conversation :global(.chat-utils) {
+  display: flex;
+}
+
+.Conversation :global(.bubbles) {
+  display: flex;
+  flex-direction: column;
+  gap: .45rem;
+  padding: 1.5rem clamp(1rem, 8vw, 5rem);
+  overflow: auto;
+}
+
+.DateSeparator {
+  align-self: center;
+  margin-block-end: .75rem;
+  padding: .25rem .65rem;
+  border-radius: 999px;
+  background: color-mix(in srgb, var(--preview-secondary) 14%, transparent);
+  color: var(--preview-secondary);
+  font-size: .75rem;
+}
+
+.Conversation :global(.bubble) {
+  display: flex;
+}
+
+.Conversation :global(.bubble.is-out) {
+  justify-content: flex-end;
+}
+
+.Conversation :global(.bubble-content) {
+  display: flex;
+  align-items: end;
+  gap: .5rem;
+  max-width: min(78%, 34rem);
+  padding: .55rem .7rem;
+  border-radius: 1.1rem;
+  background: var(--preview-incoming);
+  box-shadow: 0 1px 2px rgba(0, 0, 0, .08);
+}
+
+.Conversation :global(.bubble.is-out .bubble-content) {
+  background: var(--preview-outgoing);
+}
+
+.Conversation :global(.bubble time) {
+  flex: none;
+  color: var(--preview-secondary);
+  font-size: .68rem;
+}
+
+.Conversation :global(.chat-input-wrapper) {
+  display: flex;
+  align-items: end;
+  gap: .35rem;
+  margin: .65rem;
+  padding: .35rem;
+  background: var(--preview-surface);
+}
+
+.Conversation :global(.chat-input-control-button),
+.Conversation :global(.chat-input-secondary-button),
+.Conversation :global(.btn-send) {
+  flex: none;
+  width: 2.25rem;
+  height: 2.25rem;
+  border: 0;
+  border-radius: 50%;
+  color: var(--preview-accent);
+  background: transparent;
+}
+
+.Conversation :global(.btn-send) {
+  background: var(--preview-accent);
+  color: #fff;
+}
+
+.InputPlaceholder {
+  flex: 1;
+  min-width: 0;
+  min-height: 2.25rem;
+  padding: .55rem .65rem;
+  border: 1px solid var(--preview-border);
+  border-radius: 1.1rem;
+  color: var(--preview-secondary);
+}
+
+.SettingsPanel {
+  position: absolute;
+  inset: 0;
+  z-index: 2;
+  display: grid;
+  align-content: start;
+  gap: .75rem;
+  padding: 1.5rem;
+  overflow: auto;
+  background: var(--preview-background);
+}
+
+.SettingsTitle {
+  font-size: 1.5rem;
+  font-weight: 650;
+}
+
+.SettingsPanel :global(.sidebar-left-section) {
+  max-width: 32rem;
+  margin: 0 auto;
+}
+
+.SettingsPanel :global(.row) {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  min-height: 3rem;
+  padding: .55rem .75rem;
+}
+
+.SettingsPanel :global(.row-right) {
+  color: var(--preview-secondary);
+}
+
+.AppFrame > :global(.btn-menu) {
+  position: absolute;
+  z-index: 3;
+  inset-block-start: 3.75rem;
+  inset-inline-end: 1rem;
+  min-width: 13rem;
+  padding: .35rem;
+  background: var(--preview-surface);
+}
+
+.AppFrame > :global(.btn-menu) :global(.btn-menu-item) {
+  display: block;
+  width: 100%;
+  padding: .65rem .75rem;
+  border: 0;
+  border-radius: .55rem;
+  background: transparent;
+  color: var(--preview-text);
+  text-align: start;
+}
+
+.AppFrame > :global(.btn-menu) :global(.btn-menu-item:hover) {
+  background: color-mix(in srgb, var(--preview-accent) 12%, transparent);
+}
+
+.AppFrame > :global(.popup) {
+  position: absolute;
+  inset: 0;
+  z-index: 4;
+  display: grid;
+  place-items: center;
+  padding: 1rem;
+  background: rgba(0, 0, 0, .35);
+}
+
+.AppFrame > :global(.popup-container) {
+  max-width: 24rem;
+}
+
+.AppFrame :global(.popup-container) {
+  overflow: hidden;
+  border-radius: 1rem;
+  background: var(--preview-surface);
+  box-shadow: 0 1rem 3rem rgba(0, 0, 0, .25);
+}
+
+.AppFrame :global(.popup-header-background),
+.AppFrame :global(.popup-description),
+.AppFrame :global(.popup-footer) {
+  padding-inline: 1.25rem;
+}
+
+.AppFrame :global(.popup-header-background) {
+  padding-block: 1.1rem .5rem;
+}
+
+.AppFrame :global(.popup-description) {
+  color: var(--preview-secondary);
+}
+
+.AppFrame :global(.popup-footer) {
+  display: flex;
+  justify-content: end;
+  gap: .5rem;
+  padding-block: .75rem 1rem;
+  border-block-start: 1px solid var(--preview-border);
+}
+
+.AppFrame :global(.popup-footer-button) {
+  border: 0;
+  border-radius: .55rem;
+  padding: .55rem .75rem;
+  background: transparent;
+  color: var(--preview-accent);
+}
+
+@media(max-width: 700px) {
+  .PreviewToolbar {
+    align-items: start;
+    flex-direction: column;
+  }
+
+  .ToolbarControls {
+    flex-wrap: wrap;
+  }
+}

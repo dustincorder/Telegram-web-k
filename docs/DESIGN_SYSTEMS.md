@@ -28,3 +28,17 @@ existing `Section`/`Row`/form primitives, and continue using the existing
 settings persistence, accessibility, RTL, animation, and manager boundaries.
 The selector uses the existing language-pack keys, so English, Russian, and
 Ukrainian clients can provide localized labels without a second i18n system.
+
+## Cupertino fixture preview
+
+Development builds support `?cupertinoPreview=1`. This route mounts
+`src/components/cupertinoPreview/` before session restoration and renders
+deterministic chat, settings, menu, and dialog fixtures. It does not restore an
+account, read Telegram data, or expose write-enabled manager actions. The
+controls switch between interface styles, light/dark presentation, desktop or
+mobile sizing, and LTR/RTL direction.
+
+The preview also exposes `window.cupertinoPreview` for browser automation.
+Screenshots and interaction checks should use this route instead of creating
+authentication fixtures. Preview-only imports are behind the development gate
+in `src/index.ts` and are not loaded by production users.
