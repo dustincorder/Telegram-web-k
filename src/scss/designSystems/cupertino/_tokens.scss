@@ -6,16 +6,21 @@
   --topbar-plates-gap: 0px;
   --plates-gap: 0px;
   --ds-font-weight-emphasis: 600;
+  --ds-popup-radius: .875rem;
+
+  // iOS metrics. One hairline color for every separator in the interface;
+  // chrome is square, bubbles keep a soft corner.
+  --cupertino-navbar-height: 48px;
+  --cupertino-hairline: color-mix(in srgb, var(--secondary-text-color) 22%, transparent);
   --cupertino-radius-control: .625rem;
   --cupertino-radius-group: .75rem;
   --cupertino-radius-popover: .875rem;
-  --ds-popup-radius: var(--cupertino-radius-popover);
-  --cupertino-separator: color-mix(in srgb, var(--border-color) 80%, transparent);
   --cupertino-fill: color-mix(in srgb, var(--primary-text-color) 6%, var(--surface-color));
   --cupertino-hover: color-mix(in srgb, var(--primary-text-color) 5%, var(--surface-color));
   --cupertino-selected: color-mix(in srgb, var(--primary-color) 14%, var(--surface-color));
   --cupertino-grouped-background: color-mix(in srgb, var(--surface-color) 92%, var(--primary-text-color));
   --cupertino-floating-shadow: 0 .5rem 2rem rgb(0 0 0 / 16%);
+  --cupertino-large-title-size: 1.875rem;
   --bubble-corner-radius: 18px;
   --bubble-joined-radius: 6px;
 }

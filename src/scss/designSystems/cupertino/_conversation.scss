@@ -18,11 +18,16 @@
   }
 
   .chat {
-    --chat-padding-bottom: calc(var(--chat-input-height) + .5rem);
+    --chat-padding-bottom: calc(var(--chat-input-height) + .25rem);
   }
 
+  // ---- Docked composer: a full-width flat bar on the bottom edge of the
+  // pane with a hairline top edge (safe-area insets stay owned by the base
+  // composer). The field inside keeps a soft corner, like iOS Messages.
   .chat-input-main {
-    bottom: .5rem;
+    bottom: 0;
+    background-color: var(--surface-color);
+    border-block-start: 1px solid var(--cupertino-hairline);
   }
 
   .chat-input-container {
@@ -30,13 +35,13 @@
   }
 
   .chat-input-wrapper {
-    --chat-input-border-radius: 1.25rem;
-    border: 1px solid var(--cupertino-separator);
+    --chat-input-border-radius: 1.125rem;
+    border: 1px solid var(--cupertino-hairline);
     box-shadow: none;
   }
 
   .chat-input-plate {
-    border-block-start: 1px solid var(--cupertino-separator);
+    border-block-start: 1px solid var(--cupertino-hairline);
   }
 
   .chat-input-control-button,

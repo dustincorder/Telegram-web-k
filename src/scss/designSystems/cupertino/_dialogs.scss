@@ -1,6 +1,9 @@
 @use "../../shared" as *;
 
 @mixin styles {
+  // ---- A native-feeling dense list: full-bleed rows, hairline separators
+  // inset from the avatar, restrained tinted selection. Virtualized row
+  // heights (72px / 82px with folder tags) are JS-owned — do not change them.
   ul.chatlist {
     padding-inline: 0;
   }
@@ -12,8 +15,6 @@
   .chatlist-chat {
     border-radius: 0;
 
-    // Do not change virtualized row heights (72px / 82px with folder tags),
-    // avatar bounds, or selection-lane transforms independently of the list.
     .dialog-title .user-title {
       font-size: var(--font-size-16);
       font-weight: 600;
@@ -49,12 +50,13 @@
       }
     }
 
+    // Hairline separator between rows, inset to the text column like iOS lists.
     &:not(:last-child)::after {
       content: '';
       position: absolute;
       inset-inline: 4.5rem 0;
       inset-block-end: 0;
-      border-block-end: 1px solid var(--cupertino-separator);
+      border-block-end: 1px solid var(--cupertino-hairline);
       pointer-events: none;
     }
 

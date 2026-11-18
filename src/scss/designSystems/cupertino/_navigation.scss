@@ -1,4 +1,10 @@
+@use "../../shared" as *;
+
 @mixin styles {
+  // ---- Flat split view: plain full-height columns separated by hairlines.
+  // No floating cards, no outer padding, no shadows — the window is the
+  // iPadOS split view. The JS layout owner (updateColumnWidths.ts) already
+  // zeroes --page-chats-padding under this design system.
   #column-left,
   #column-right {
     box-shadow: none;
@@ -6,33 +12,41 @@
   }
 
   #column-left {
-    border-inline-end: 1px solid var(--cupertino-separator);
+    border-inline-end: 1px solid var(--cupertino-hairline);
   }
 
   #column-right {
-    border-inline-start: 1px solid var(--cupertino-separator);
+    border-inline-start: 1px solid var(--cupertino-hairline);
   }
 
-  .pinned-audio,
-  .pinned-call {
-    inset-inline: var(--chat-pane-inline-inset, 0px);
-    max-width: none;
-    border-radius: 0;
-    box-shadow: none;
-    border-block-end: 1px solid var(--cupertino-separator);
+  // ---- Large navigation title (the Cupertino marker). The element is
+  // rendered by AppSidebarLeft inside #chatlist-container, so it hides with
+  // the list during search and tab navigation.
+  .cupertino-large-title {
+    padding: .375rem 1rem .25rem;
+
+    .cupertino-large-title-text {
+      font-size: var(--cupertino-large-title-size);
+      line-height: 1.2;
+      font-weight: 700;
+      letter-spacing: -.02em;
+      color: var(--primary-text-color);
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
   }
 
-  .topbar-floating-plates {
-    border-radius: 0;
-    box-shadow: none;
-    border-block-end: 1px solid var(--cupertino-separator);
+  #column-left.is-collapsed .cupertino-large-title {
+    display: none;
   }
 
+  // ---- Navigation bars: full width, flat, hairline bottom edge.
   .sidebar-header,
   .main-search-sidebar-header {
     border-radius: 0;
     background-color: var(--surface-color);
-    border-block-end: 1px solid var(--cupertino-separator);
+    border-block-end: 1px solid var(--cupertino-hairline);
   }
 
   .input-search {
@@ -42,13 +56,30 @@
     --input-search-border-color: transparent;
   }
 
+  // Pinned call / audio plates become full-width bars under the nav bar.
+  .pinned-audio,
+  .pinned-call {
+    inset-inline: var(--chat-pane-inline-inset, 0px);
+    max-width: none;
+    border-radius: 0;
+    box-shadow: none;
+    border-block-end: 1px solid var(--cupertino-hairline);
+  }
+
+  .topbar-floating-plates {
+    border-radius: 0;
+    box-shadow: none;
+    border-block-end: 1px solid var(--cupertino-hairline);
+  }
+
+  // Chat nav bar: one full-width bar instead of the floating plate row.
   .topbar {
     --topbar-box-shadow: none;
     // Same pane bounds as the history scroll region; message width stays capped.
     inset-inline: var(--chat-pane-inline-inset, 0px);
     max-width: none;
     border: 0;
-    border-block-end: 1px solid var(--cupertino-separator);
+    border-block-end: 1px solid var(--cupertino-hairline);
     border-radius: 0;
 
     .peer-title,
@@ -61,11 +92,10 @@
     }
   }
 
-  // Keep the folder underline and the app's scrolling/overflow behavior. A row
-  // of pill cards obscures which level of navigation the folders belong to.
+  // ---- Folder tabs: an iOS-style tinted text strip, not pill cards.
   .menu-horizontal-scrollable {
     background-color: var(--surface-color);
-    border-block-end: 1px solid var(--cupertino-separator);
+    border-block-end: 1px solid var(--cupertino-hairline);
   }
 
   .menu-horizontal-div-item {
@@ -82,7 +112,7 @@
     --folders-sidebar-item-selected-color: var(--primary-color);
     background-color: var(--surface-color);
     box-shadow: none;
-    border-inline-end: 1px solid var(--cupertino-separator);
+    border-inline-end: 1px solid var(--cupertino-hairline);
 
     &__background {
       // The rail is navigation chrome, independent of the chat wallpaper.
@@ -96,6 +126,18 @@
         color: var(--primary-color);
         background-color: var(--cupertino-selected);
       }
+    }
+  }
+
+  @include respond-to(handhelds) {
+    // Mobile: the same nav-bar language with safe-area-aware bars.
+    .sidebar-header,
+    .main-search-sidebar-header {
+      padding-block-start: env(safe-area-inset-top);
+    }
+
+    .topbar {
+      padding-block-start: env(safe-area-inset-top);
     }
   }
 }

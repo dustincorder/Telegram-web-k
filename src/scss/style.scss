@@ -1,7 +1,6 @@
 @use "shared" as *;
 
 @use "base";
-@use "partials/designSystemCupertino";
 @use "components/prism";
 @use "fonts";
 @use "partials/ripple";
@@ -131,3 +130,7 @@
 
 @use "partials/accessibility";
 @use "partials/testDcBadge";
+
+// Cupertino overrides every app partial — it must be the last import so it
+// wins the cascade at equal specificity.
+@use "partials/designSystemCupertino";

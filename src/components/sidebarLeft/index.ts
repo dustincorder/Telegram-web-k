@@ -161,6 +161,7 @@ export class AppSidebarLeft extends SidebarSlider {
   private hasUpdate: boolean;
 
   private onResize: () => void;
+  private largeTitle: HTMLElement;
 
   constructor() {
     super({
@@ -178,6 +179,19 @@ export class AppSidebarLeft extends SidebarSlider {
     if(!Modes.a11y) (this.inputSearch.input as HTMLInputElement).placeholder = ' ';
     const sidebarHeader = this.sidebarEl.querySelector('.item-main .sidebar-header');
     sidebarHeader.append(this.inputSearch.container);
+
+    // Cupertino-only large navigation title (iOS-style). Lives inside the
+    // chat-list transition item so it hides with the list (search, other tabs);
+    // the stylesheet keeps it `display: none` outside the cupertino boundary.
+    // Hidden by aria-hidden: it duplicates the list heading for assistive tech.
+    this.largeTitle = document.createElement('div');
+    this.largeTitle.className = 'cupertino-large-title';
+    this.largeTitle.setAttribute('aria-hidden', 'true');
+    const largeTitleText = document.createElement('span');
+    largeTitleText.classList.add('cupertino-large-title-text');
+    largeTitleText.textContent = I18n.format('FilterChats', true);
+    this.largeTitle.append(largeTitleText);
+    this.chatListContainer.prepend(this.largeTitle);
 
     this.backBtn = this.sidebarEl.querySelector('.sidebar-back-button') as HTMLButtonElement;
     this.backBtn.setAttribute('aria-label', I18n.format('StarsRating.Back', true));

@@ -136,3 +136,22 @@ The controller's dependency-free regression script also exercises the actual
 width helper across style changes, resized/collapsed sidebars, folder rails and
 mobile sizes. Browser layout, contrast, RTL, focus, media/call accessories and
 Cloudflare builds still need runtime verification.
+
+## Cascade order and the large navigation title
+
+Two structural fixes define the current implementation:
+
+1. **Cascade order.** `partials/_designSystemCupertino.scss` is imported last
+   in `style.scss` (after every app partial). Previously it was imported
+   fourth, so its rules lost the cascade against ~90 later partials at equal
+   specificity — the main reason the Cupertino selection barely changed the
+   rendered interface.
+2. **Large navigation title.** `AppSidebarLeft` renders a
+   `.cupertino-large-title` element (localized via the existing
+   `FilterChats` key) as the first child of `#chatlist-container`, so it
+   hides with the list during search and tab navigation. The stylesheet keeps
+   it `display: none` outside the Cupertino boundary and reveals it inside
+   `html[data-design-system='cupertino']` as a 30px/700-weight large title —
+   the clearly identifiable implementation marker between Classic and
+   Cupertino. It is `aria-hidden` (it duplicates the list heading) and hides
+   when the sidebar is collapsed.
