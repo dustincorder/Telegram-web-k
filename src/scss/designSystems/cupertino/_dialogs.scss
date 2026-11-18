@@ -1,0 +1,74 @@
+@use "../../shared" as *;
+
+@mixin styles {
+  ul.chatlist {
+    padding-inline: .5rem;
+  }
+
+  .chatlist-chat {
+    border-radius: var(--cupertino-radius-control);
+
+    // Do not change virtualized row heights (72px / 82px with folder tags),
+    // avatar bounds, or selection-lane transforms independently of the list.
+    .dialog-title {
+      font-size: var(--font-size-16);
+      font-weight: 600;
+    }
+
+    .dialog-subtitle {
+      font-size: var(--font-size-14);
+      color: var(--secondary-text-color);
+    }
+
+    .dialog-title-details {
+      font-size: var(--font-size-12);
+      font-variant-numeric: tabular-nums;
+    }
+
+    &:not(.active):not(.is-selected) {
+      &.menu-open,
+      &.is-forum-open,
+      &.is-dragover {
+        --background: var(--cupertino-hover);
+      }
+
+      @media(hover: hover) {
+        &:hover {
+          --background: var(--cupertino-hover);
+        }
+      }
+    }
+
+    &:not(:last-child)::after {
+      content: '';
+      position: absolute;
+      inset-inline: 4.5rem .75rem;
+      inset-block-end: 0;
+      border-block-end: 1px solid var(--cupertino-separator);
+      pointer-events: none;
+    }
+
+    &.active::after,
+    &:has(+ .active)::after {
+      border-color: transparent;
+    }
+
+    // Retain upstream's complete white-on-accent selection palette, including
+    // stories, verified marks, typing, pinned times and muted badges.
+    @include respond-to(not-handhelds) {
+      &.active {
+        --background: var(--primary-color) !important;
+      }
+    }
+  }
+
+  @include respond-to(handhelds) {
+    ul.chatlist {
+      padding-inline: 0;
+    }
+
+    .chatlist-chat {
+      border-radius: 0;
+    }
+  }
+}

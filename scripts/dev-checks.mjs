@@ -90,9 +90,14 @@ function truncateOverlayOutput(output) {
 }
 
 export default function devChecks(rootDir) {
+  let disposeServer;
   return {
     name: checksPluginName,
     apply: 'serve',
+    closeBundle() {
+      // Middleware-mode servers need cleanup too: they have no httpServer.
+      disposeServer?.();
+    },
     resolveId(id) {
       if(id === virtualClientId) {
         return resolvedVirtualClientId;
@@ -139,7 +144,9 @@ export default function devChecks(rootDir) {
         pipeWithPrefix(child.stderr, process.stderr, label, onLine);
         child.once('close', () => children.delete(child));
         child.once('error', (error) => {
-          log(label, `Failed to start: ${error.message}`, process.stderr);
+          const message = `Failed to start ${name}: ${error.message}`;
+          onLine?.(message);
+          log(label, message, process.stderr);
         });
 
         return child;
@@ -234,6 +241,7 @@ export default function devChecks(rootDir) {
         lintTimer = setTimeout(runLint, 200);
       }
 
+      const typecheckOutput = [];
       let typecheckCollecting = false;
       let typecheckLines = [];
 
@@ -272,15 +280,22 @@ export default function devChecks(rootDir) {
         'tsc',
         ['--noEmit', '--watch', '--preserveWatchOutput'],
         'typecheck',
-        handleTypecheckLine
+        (line) => {
+          // Retain a bounded tail even outside a compilation cycle (startup
+          // failures and Node fatal errors never print the watch summary).
+          typecheckOutput.push(line);
+          if(typecheckOutput.length > 80) typecheckOutput.shift();
+          handleTypecheckLine(line);
+        }
       );
-      typecheck.once('close', (exitCode) => {
+      typecheck.once('close', (exitCode, signal) => {
         if(!disposed) {
-          log('typecheck', `Watcher exited with code ${exitCode ?? 1}.`, process.stderr);
+          const reason = signal ? `signal ${signal}` : `code ${exitCode ?? 'unknown'}`;
+          log('typecheck', `Watcher exited with ${reason}.`, process.stderr);
           updateDiagnostics('typecheck', {
             label: 'TypeScript',
             summary: 'TypeScript watcher stopped',
-            output: `TypeScript watcher exited with code ${exitCode ?? 1}.`
+            output: [`TypeScript watcher exited with ${reason}.`, ...typecheckOutput].join('\n')
           });
         }
       });
@@ -304,6 +319,7 @@ export default function devChecks(rootDir) {
         }
       }
 
+      disposeServer = dispose;
       server.watcher.on('all', scheduleLint);
       server.ws.on(readyEventName, handleClientReady);
       server.httpServer?.once('close', dispose);

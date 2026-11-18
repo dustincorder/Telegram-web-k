@@ -1281,10 +1281,10 @@ $message-out-gradient-phases: 0, 1, 2, 3, 4, 5, 6, 7;
   }
 
   &-first {
-    --border-start-start-radius: #{$bubble-border-radius-big};
-    --border-start-end-radius: #{$bubble-border-radius-big};
-    --border-end-end-radius: #{$bubble-border-radius-big};
-    --border-end-start-radius: #{$bubble-border-radius-big};
+    --border-start-start-radius: var(--bubble-corner-radius, #{$bubble-border-radius-big});
+    --border-start-end-radius: var(--bubble-corner-radius, #{$bubble-border-radius-big});
+    --border-end-end-radius: var(--bubble-corner-radius, #{$bubble-border-radius-big});
+    --border-end-start-radius: var(--bubble-corner-radius, #{$bubble-border-radius-big});
     order: -1;
     margin-top: .5rem;
     justify-content: center;
@@ -1419,7 +1419,7 @@ $message-out-gradient-phases: 0, 1, 2, 3, 4, 5, 6, 7;
     }
 
     .name-with-reply {
-      border-radius: $bubble-border-radius-big;
+      border-radius: var(--bubble-corner-radius, #{$bubble-border-radius-big});
       padding: .375rem .5rem;
     }
   }
@@ -2550,8 +2550,8 @@ $message-out-gradient-phases: 0, 1, 2, 3, 4, 5, 6, 7;
   }
 
   &.with-reply-markup {
-    --border-end-start-radius: #{$bubble-border-radius-medium} !important;
-    --border-end-end-radius: #{$bubble-border-radius-medium} !important;
+    --border-end-start-radius: var(--bubble-joined-radius, #{$bubble-border-radius-medium}) !important;
+    --border-end-end-radius: var(--bubble-joined-radius, #{$bubble-border-radius-medium}) !important;
   }
 
   .name-with-reply {
@@ -3707,8 +3707,8 @@ $message-out-gradient-phases: 0, 1, 2, 3, 4, 5, 6, 7;
   }
 
   &.with-reply-markup .service-msg {
-    border-bottom-left-radius: #{$bubble-border-radius-medium};
-    border-bottom-right-radius: #{$bubble-border-radius-medium};
+    border-bottom-left-radius: var(--bubble-joined-radius, #{$bubble-border-radius-medium});
+    border-bottom-right-radius: var(--bubble-joined-radius, #{$bubble-border-radius-medium});
   }
 
   .reactions-like-block {
@@ -3747,7 +3747,7 @@ $message-out-gradient-phases: 0, 1, 2, 3, 4, 5, 6, 7;
   .service-msg {
     align-self: center;
     max-width: 100%;
-    border-radius: #{$bubble-border-radius-big};
+    border-radius: var(--bubble-corner-radius, #{$bubble-border-radius-big});
 
     display: block;
     text-align: center;
@@ -3762,10 +3762,10 @@ $message-out-gradient-phases: 0, 1, 2, 3, 4, 5, 6, 7;
 }
 
 .bubble.is-in {
-  --border-start-start-radius: #{$bubble-border-radius-medium};
-  --border-start-end-radius: #{$bubble-border-radius-big};
-  --border-end-end-radius: #{$bubble-border-radius-big};
-  --border-end-start-radius: #{$bubble-border-radius-medium};
+  --border-start-start-radius: var(--bubble-joined-radius, #{$bubble-border-radius-medium});
+  --border-start-end-radius: var(--bubble-corner-radius, #{$bubble-border-radius-big});
+  --border-end-end-radius: var(--bubble-corner-radius, #{$bubble-border-radius-big});
+  --border-end-start-radius: var(--bubble-joined-radius, #{$bubble-border-radius-medium});
 
   .bubble-content {
     &-wrapper {
@@ -3776,7 +3776,7 @@ $message-out-gradient-phases: 0, 1, 2, 3, 4, 5, 6, 7;
   }
 
   &.is-group-first, &.is-forced-rounded {
-    --border-start-start-radius: #{$bubble-border-radius-big};
+    --border-start-start-radius: var(--bubble-corner-radius, #{$bubble-border-radius-big});
   }
 
   &.is-group-last, &.is-forced-rounded {
@@ -3789,7 +3789,7 @@ $message-out-gradient-phases: 0, 1, 2, 3, 4, 5, 6, 7;
 
       &.has-plain-media-tail {
         .attachment {
-          border-end-start-radius: $bubble-border-radius-big;
+          border-end-start-radius: var(--bubble-corner-radius, #{$bubble-border-radius-big});
         }
       }
 
@@ -3800,7 +3800,7 @@ $message-out-gradient-phases: 0, 1, 2, 3, 4, 5, 6, 7;
     }
 
     &:not(.can-have-tail) {
-      --border-end-start-radius: #{$bubble-border-radius-big};
+      --border-end-start-radius: var(--bubble-corner-radius, #{$bubble-border-radius-big});
     }
   }
 
@@ -3860,10 +3860,10 @@ $message-out-gradient-phases: 0, 1, 2, 3, 4, 5, 6, 7;
   --peer-color-rgb: var(--message-primary-color-rgb);
   --peer-border-background: var(--message-out-peer-border-background);
   --message-reaction-tag-dot-color: var(--message-out-reaction-tag-dot-color);
-  --border-start-start-radius: #{$bubble-border-radius-big};
-  --border-start-end-radius: #{$bubble-border-radius-medium};
-  --border-end-end-radius: #{$bubble-border-radius-medium};
-  --border-end-start-radius: #{$bubble-border-radius-big};
+  --border-start-start-radius: var(--bubble-corner-radius, #{$bubble-border-radius-big});
+  --border-start-end-radius: var(--bubble-joined-radius, #{$bubble-border-radius-medium});
+  --border-end-end-radius: var(--bubble-joined-radius, #{$bubble-border-radius-medium});
+  --border-end-start-radius: var(--bubble-corner-radius, #{$bubble-border-radius-big});
 
   .bubble-content {
     margin-inline-start: auto;
@@ -4013,7 +4013,7 @@ $message-out-gradient-phases: 0, 1, 2, 3, 4, 5, 6, 7;
   } */
 
   &.is-group-first, &.is-forced-rounded {
-    --border-start-end-radius: #{$bubble-border-radius-big};
+    --border-start-end-radius: var(--bubble-corner-radius, #{$bubble-border-radius-big});
   }
 
   &.is-group-last, &.is-forced-rounded {
@@ -4041,7 +4041,7 @@ $message-out-gradient-phases: 0, 1, 2, 3, 4, 5, 6, 7;
 
       &.has-plain-media-tail {
         .attachment {
-          border-end-end-radius: $bubble-border-radius-big;
+          border-end-end-radius: var(--bubble-corner-radius, #{$bubble-border-radius-big});
         }
       }
 
@@ -4052,7 +4052,7 @@ $message-out-gradient-phases: 0, 1, 2, 3, 4, 5, 6, 7;
     }
 
     &:not(.can-have-tail) {
-      --border-end-end-radius: #{$bubble-border-radius-big};
+      --border-end-end-radius: var(--bubble-corner-radius, #{$bubble-border-radius-big});
     }
   }
 
@@ -4422,10 +4422,10 @@ $message-out-gradient-phases: 0, 1, 2, 3, 4, 5, 6, 7;
 }
 
 .botforum-new-topic-bubble {
-  --border-start-start-radius: #{$bubble-border-radius-big};
-  --border-start-end-radius: #{$bubble-border-radius-big};
-  --border-end-end-radius: #{$bubble-border-radius-big};
-  --border-end-start-radius: #{$bubble-border-radius-big};
+  --border-start-start-radius: var(--bubble-corner-radius, #{$bubble-border-radius-big});
+  --border-start-end-radius: var(--bubble-corner-radius, #{$bubble-border-radius-big});
+  --border-end-end-radius: var(--bubble-corner-radius, #{$bubble-border-radius-big});
+  --border-end-start-radius: var(--bubble-corner-radius, #{$bubble-border-radius-big});
   order: 1000000;
   margin-top: 1.5rem;
   justify-content: center;

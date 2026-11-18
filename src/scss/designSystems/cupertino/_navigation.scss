@@ -1,0 +1,83 @@
+@use "../../shared" as *;
+
+@mixin styles {
+  #column-left,
+  #column-right {
+    box-shadow: none;
+    background-color: var(--surface-color);
+  }
+
+  #column-left {
+    border-inline-end: 1px solid var(--cupertino-separator);
+  }
+
+  #column-right {
+    border-inline-start: 1px solid var(--cupertino-separator);
+  }
+
+  .sidebar-header,
+  .main-search-sidebar-header {
+    border-block-end: 1px solid var(--cupertino-separator);
+  }
+
+  .input-search {
+    --height: 36px;
+    --border-radius: var(--cupertino-radius-control);
+    --input-search-background-color: var(--cupertino-fill);
+    --input-search-border-color: transparent;
+  }
+
+  .topbar {
+    --topbar-box-shadow: none;
+    border: 1px solid var(--cupertino-separator);
+    border-radius: var(--cupertino-radius-group);
+
+    .peer-title,
+    .user-title {
+      font-weight: 600;
+    }
+
+    .btn-icon {
+      color: var(--primary-color);
+    }
+  }
+
+  // Keep the folder underline and the app's scrolling/overflow behavior. A row
+  // of pill cards obscures which level of navigation the folders belong to.
+  .menu-horizontal-scrollable {
+    background-color: var(--surface-color);
+    border-block-end: 1px solid var(--cupertino-separator);
+  }
+
+  .menu-horizontal-div-item {
+    font-weight: 600;
+    color: var(--secondary-text-color);
+
+    &.active {
+      color: var(--primary-color);
+    }
+  }
+
+  .folders-sidebar {
+    background-color: var(--surface-color);
+    box-shadow: none;
+    border-inline-end: 1px solid var(--cupertino-separator);
+
+    &__folder-item {
+      border-radius: var(--cupertino-radius-control);
+
+      &--selected {
+        color: var(--primary-color);
+        background-color: var(--cupertino-selected);
+      }
+    }
+  }
+
+  @include respond-to(handhelds) {
+    .topbar {
+      border: 0;
+      border-block-end: 1px solid var(--cupertino-separator);
+      border-radius: 0;
+    }
+  }
+}

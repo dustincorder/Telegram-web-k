@@ -1,0 +1,18 @@
+@mixin styles {
+  // Keep theme/accent/contrast selection independent of interface geometry.
+  --font-regular: -apple-system, BlinkMacSystemFont, "Segoe UI", "Helvetica Neue", "Apple Color Emoji", "Segoe UI Emoji", sans-serif;
+  --font-weight-bold: 600;
+  --ds-font-weight-emphasis: 600;
+  --cupertino-radius-control: .625rem;
+  --cupertino-radius-group: .75rem;
+  --cupertino-radius-popover: .875rem;
+  --ds-popup-radius: var(--cupertino-radius-popover);
+  --cupertino-separator: color-mix(in srgb, var(--border-color) 80%, transparent);
+  --cupertino-fill: color-mix(in srgb, var(--primary-text-color) 6%, var(--surface-color));
+  --cupertino-hover: color-mix(in srgb, var(--primary-text-color) 5%, var(--surface-color));
+  --cupertino-selected: color-mix(in srgb, var(--primary-color) 14%, var(--surface-color));
+  --cupertino-grouped-background: color-mix(in srgb, var(--surface-color) 92%, var(--primary-text-color));
+  --cupertino-floating-shadow: 0 .5rem 2rem rgb(0 0 0 / 16%);
+  --bubble-corner-radius: 18px;
+  --bubble-joined-radius: 6px;
+}

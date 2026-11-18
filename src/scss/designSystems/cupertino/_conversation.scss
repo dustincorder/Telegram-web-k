@@ -1,0 +1,40 @@
+@mixin styles {
+  // Theme-derived message colors stay together: text, links, replies, polls,
+  // reactions, time, tails and media overlays must agree with the background.
+  .bubble .bubble-content {
+    box-shadow: none;
+  }
+
+  .bubble.is-group-last {
+    margin-block-end: .5rem;
+  }
+
+  .bubble .time {
+    font-variant-numeric: tabular-nums;
+  }
+
+  .bubbles .service-msg {
+    font-weight: 500;
+  }
+
+  .chat-input-wrapper {
+    --chat-input-border-radius: 1.25rem;
+    border: 1px solid var(--cupertino-separator);
+    box-shadow: none;
+  }
+
+  .chat-input-plate {
+    border-block-start: 1px solid var(--cupertino-separator);
+  }
+
+  .chat-input-control-button,
+  .chat-input-secondary-button {
+    color: var(--primary-color);
+  }
+
+  // Existing control dimensions and helper/editor height accounting also
+  // cover recording, selection, reply/edit, bot keyboards and the mobile IME.
+  .chat-input .btn-send:not(.disabled) {
+    box-shadow: none;
+  }
+}
