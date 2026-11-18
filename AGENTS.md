@@ -4,6 +4,34 @@ Canonical instructions for **every** coding agent working in this repo (Claude
 Code, Codex, Cursor, Zed, …). `CLAUDE.md` is only a pointer that imports this
 file — edit AGENTS.md, never CLAUDE.md.
 
+## Fork-specific development
+
+- Preserve the upstream fork relationship and Telegram Web conventions. Do not
+  turn this repository into a new framework or backend.
+- Production is a static Cloudflare Pages deployment at
+  `https://tweb.dustcord.dev/`. Do not add server-side runtime code, proxies,
+  DNS changes, or Cloudflare secrets to application source.
+- The Cloudflare build command is `pnpm run build`; the output directory is
+  `dist/`. Node 22.18.0 or a compatible Node 24 release is required.
+- Keep `vite.config.ts`'s root-relative assets and curated static-public-asset
+  copy. Workers, Wasm, manifests, PWA assets and static HTML must remain
+  deployable under the Pages root without copying obsolete hashed bundles.
+- UI changes must use existing Solid components, theme variables, CSS modules,
+  i18n strings and accessibility/RTL helpers. Keep changed UI behind existing
+  `Modes.a11y`/animation behavior and verify it in LTR and RTL.
+- Never call MTProto APIs directly from UI code. Extend the relevant app
+  manager and bind account-aware work to the starting session.
+- Do not casually edit authentication, MTProto, cryptography, account/session
+  storage, service workers, or the generated language/settings files. Those
+  areas require a reproduced deployment or protocol regression.
+- Before finishing UI work, run the smallest relevant test file and the
+  applicable popup/a11y/focus/e2e suite. Do not claim a build or test passed
+  unless it was actually run and succeeded.
+- Inspect `.github/workflows/` before adding CI. Cloudflare owns deployment;
+  GitHub Actions must not duplicate it.
+- Use `docs/FORK_DEVELOPMENT.md` for fork structure, Cloudflare configuration,
+  UI entry points, validation, and upstream synchronization.
+
 ## Project Overview
 
 **tweb** is a full-featured Telegram web client (https://web.telegram.org/k/) built with Solid.js and TypeScript. It implements Telegram's MTProto protocol directly in the browser (no third-party API wrappers). The codebase is large (~100k+ lines excluding vendor), mature, and highly performance-oriented.

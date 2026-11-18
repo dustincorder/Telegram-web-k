@@ -15,7 +15,7 @@ const EXPECTED_SCOPE_EXTENSIONS = [
   {type: 'origin', origin: 'https://t.me'},
   {type: 'origin', origin: 'https://telegram.me'}
 ];
-const EXPECTED_MANIFEST_ID = 'https://web.telegram.org/k/';
+const EXPECTED_MANIFEST_ID = 'https://tweb.dustcord.dev/';
 
 const manifests = [
   'site.webmanifest',
@@ -27,8 +27,8 @@ const manifests = [
 
 describe('PWA web manifests', () => {
   test.each(manifests)('$fileName has a stable identity and Telegram link scopes', ({manifest}) => {
-    expect(manifest.id).toBe('/k/');
-    expect(new URL(manifest.id, 'https://web.telegram.org/').href).toBe(EXPECTED_MANIFEST_ID);
+    expect(manifest.id).toBe('/');
+    expect(new URL(manifest.id, 'https://tweb.dustcord.dev/').href).toBe(EXPECTED_MANIFEST_ID);
     expect(manifest.start_url).toBe('./');
     expect(manifest.scope).toBe('./');
     expect(manifest.scope_extensions).toEqual(EXPECTED_SCOPE_EXTENSIONS);
